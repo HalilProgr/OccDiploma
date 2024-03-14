@@ -22,5 +22,28 @@
         <file>Resources/torus.png</file>
         <file>Resources/wedge.png</file>
         <file>Resources/Zoom.png</file>
+        <file>Resources/antialiasing.png</file>
+        <file>Resources/cursor_rotate.png</file>
+        <file>Resources/cursor_zoom.png</file>
+        <file>Resources/raytracing.png</file>
+        <file>Resources/reflections.png</file>
+        <file>Resources/shadows.png</file>
+        <file>Resources/tool_color.png</file>
+        <file>Resources/tool_delete.png</file>
+        <file>Resources/tool_material.png</file>
+        <file>Resources/tool_shading.png</file>
+        <file>Resources/tool_transparency.png</file>
+        <file>Resources/tool_wireframe.png</file>
+        <file>Resources/view_axo.png</file>
+        <file>Resources/view_back.png</file>
+        <file>Resources/view_bottom.png</file>
+        <file>Resources/view_comp_off.png</file>
+        <file>Resources/view_comp_on.png</file>
+        <file>Resources/view_fitall.png</file>
+        <file>Resources/view_front.png</file>
+        <file>Resources/view_left.png</file>
+        <file>Resources/view_reset.png</file>
+        <file>Resources/view_right.png</file>
+        <file>Resources/view_top.png</file>
     </qresource>
 </RCC>
