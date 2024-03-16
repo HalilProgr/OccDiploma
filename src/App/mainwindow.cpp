@@ -7,21 +7,16 @@
 #include <AIS_Shape.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 
+#include "data/Segment.h"
 
+#include "algorithms/kinematic.h"
 
 #include "view/DocumentCommon.hpp"
 
 ApplicationCommonWindow::ApplicationCommonWindow()
-: QMainWindow (nullptr)
+    : QMainWindow (nullptr)
 {
-
-
-
-    // dummy shape for testing
-    TopoDS_Shape aBox = BRepPrimAPI_MakeBox (100.0, 50.0, 90.0).Shape();
-    Handle(AIS_Shape) aShape = new AIS_Shape (aBox);
-
-    shapes.Append(aShape);
+    shapes.Init();
 
     document = new DocumentCommon(this);
 

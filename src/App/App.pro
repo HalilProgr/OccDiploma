@@ -8,6 +8,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 SOURCES += \
         algorithms/kinematic.cpp \
         data/CollectionShapes.cpp \
+        data/Segment.cpp \
         data/reader.cpp \
         main.cpp\
         mainwindow.cpp \
@@ -16,13 +17,16 @@ SOURCES += \
         view/OcctQtViewer.cpp
 
 HEADERS  += \
+        algorithms/ikinematic.h \
         algorithms/kinematic.h \
-        data/CollectionShapes.hpp \
+        data/CollectionShapes.h \
+        data/Segment.h \
         data/reader.h \
         mainwindow.hpp \
         view/DocumentCommon.hpp \
         view/OcctGlTools.h \
-        view/OcctQtViewer.h
+        view/OcctQtViewer.h \
+        common/Tools.h
 
 
 FORMS    += mainwindow.ui

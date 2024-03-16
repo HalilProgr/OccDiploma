@@ -9,7 +9,9 @@
 #include "view/DocumentCommon.hpp"
 #include "view/OcctQtViewer.h"
 
-#include "data/CollectionShapes.hpp"
+#include "data/CollectionShapes.h"
+
+#include "algorithms/kinematic.h"
 
 class View;
 class GeomWidget;
@@ -24,7 +26,7 @@ public:
     ~ApplicationCommonWindow();
 
 private:
-    CollectionShapes shapes;
+    App::Data::CollectionShapes shapes;
 
     DocumentCommon* document;
     OcctQtViewer* viewer;
