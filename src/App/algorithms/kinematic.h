@@ -28,7 +28,7 @@ namespace App
         /// \param Номер звена
         /// \param новый угол
         ///
-        void MoveSegment(int numberSegment, double newValue) override;
+        void MoveSegment(int numberSegment, double deltaValue) override;
 
         ///
         /// \brief Переместить точку TCP, найти обобщенные координаты

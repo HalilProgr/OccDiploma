@@ -30,8 +30,10 @@
 #include <AIS_ViewController.hxx>
 #include <V3d_View.hxx>
 
+#include "common/DocumentCommon.hpp"
+
 class AIS_ViewCube;
-class DocumentCommon;
+//class App::CommoDocumentCommon;
 
 //! OCCT 3D View.
 class OcctQtViewer : public QOpenGLWidget, public AIS_ViewController
@@ -40,7 +42,7 @@ class OcctQtViewer : public QOpenGLWidget, public AIS_ViewController
 public:
 
     //! Main constructor.
-    OcctQtViewer (DocumentCommon* document, QWidget* theParent = nullptr);
+    OcctQtViewer (App::Common::DocumentCommon* document, QWidget* theParent = nullptr);
 
     //! Destructor.
     virtual ~OcctQtViewer();
@@ -92,12 +94,14 @@ private:
                                   const Handle(V3d_View)& theView) override;
 
 private:
-    DocumentCommon* document;
+    App::Common::DocumentCommon* document;
 
     Handle(V3d_View)               myView;
     Handle(AIS_ViewCube)           myViewCube;
 
     Handle(V3d_View)               myFocusView;
+
+    Handle(AIS_InteractiveObject) m_Selected;
 
     QString myGlInfo;
     bool myIsCoreProfile;

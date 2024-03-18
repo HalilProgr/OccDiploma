@@ -100,19 +100,16 @@ namespace App::Data
 using App::Tools::FrameToTrsf;
 
 CollectionShapes::CollectionShapes()
-{
-
-}
+{}
 
 void CollectionShapes::Init()
 {
     _kinematic.init();
-    _kinematic.MoveSegment(1, 45);
 
     auto AIS_shapes = ReadFile("C:/Qtprogect/OccDiploma/robot/kuka_base.step");
 
     gp_Pnt x0;
-    Segment basa(AIS_shapes,x0,Mode::base);
+    std::shared_ptr<Segment> basa = std::make_shared<Segment>(AIS_shapes,x0,Mode::base);
 
     _data.push_back(basa);
     for (auto& shap : AIS_shapes)
@@ -120,7 +117,7 @@ void CollectionShapes::Init()
 
     AIS_shapes = ReadFile("C:/Qtprogect/OccDiploma/robot/kuka_joint_1.step");
 
-    Segment basa1(AIS_shapes,gp_Pnt(0,0,0),Mode::RotZ);
+    std::shared_ptr<Segment> basa1 = std::make_shared<Segment>(AIS_shapes,gp_Pnt(0,0,0),Mode::RotZ, 0);
 
 
     _data.push_back(basa1);
@@ -130,7 +127,7 @@ void CollectionShapes::Init()
 
     AIS_shapes = ReadFile("C:/Qtprogect/OccDiploma/robot/kuka_joint_2.step");
 
-    Segment basa2(AIS_shapes,gp_Pnt(25,0,400),Mode::RotY);
+    std::shared_ptr<Segment> basa2 = std::make_shared<Segment>(AIS_shapes,gp_Pnt(25,0,400),Mode::RotY, 1);
 
     _data.push_back(basa2);
     for (auto& shap : AIS_shapes)
@@ -138,7 +135,7 @@ void CollectionShapes::Init()
 
     AIS_shapes = ReadFile("C:/Qtprogect/OccDiploma/robot/kuka_joint_3.step");
 
-    Segment basa3(AIS_shapes,gp_Pnt(25,0,855),Mode::RotY);
+    std::shared_ptr<Segment> basa3 = std::make_shared<Segment>(AIS_shapes,gp_Pnt(25,0,855),Mode::RotY, 2);
 
     _data.push_back(basa3);
     for (auto& shap : AIS_shapes)
@@ -146,7 +143,7 @@ void CollectionShapes::Init()
 
     AIS_shapes = ReadFile("C:/Qtprogect/OccDiploma/robot/kuka_joint_4.step");
 
-    Segment basa4(AIS_shapes,gp_Pnt(25, 0, 890),Mode::RotX);
+    std::shared_ptr<Segment> basa4 = std::make_shared<Segment>(AIS_shapes,gp_Pnt(25, 0, 890),Mode::RotX, 3);
 
     _data.push_back(basa4);
     for (auto& shap : AIS_shapes)
@@ -154,7 +151,7 @@ void CollectionShapes::Init()
 
     AIS_shapes = ReadFile("C:/Qtprogect/OccDiploma/robot/kuka_joint_5.step");
 
-    Segment basa5(AIS_shapes,gp_Pnt(445,0,890),Mode::RotY);
+    std::shared_ptr<Segment> basa5 = std::make_shared<Segment>(AIS_shapes,gp_Pnt(445,0,890),Mode::RotY, 4);
 
     _data.push_back(basa5);
     for (auto& shap : AIS_shapes)
@@ -162,7 +159,7 @@ void CollectionShapes::Init()
 
     AIS_shapes = ReadFile("C:/Qtprogect/OccDiploma/robot/kuka_joint_6.step");
 
-    Segment basa6(AIS_shapes,gp_Pnt(525,0,890),Mode::RotX);
+    std::shared_ptr<Segment> basa6 = std::make_shared<Segment>(AIS_shapes,gp_Pnt(525,0,890),Mode::tool, 5);
 
     _data.push_back(basa6);
     for (auto& shap : AIS_shapes)
@@ -235,59 +232,49 @@ std::vector<Handle (AIS_InteractiveObject)> CollectionShapes::ReadFile(const std
             Visit(c.Value(), outVec);
     }
 
-    void CollectionShapes::SetPositionTCP(gp_Trsf pos)
+    std::shared_ptr<Segment> CollectionShapes::GetSegment(Handle(AIS_InteractiveObject) obj)
     {
-        _basePosition = pos;
+        for (auto& seg : _data)
+        {
+            if (seg->IsPart(obj))
+                return seg;
+        }
+
+        return std::shared_ptr<Segment>();
+    }
+
+    void CollectionShapes::MoveTCP(gp_Trsf pos)
+    {
+        KDL::Frame newTCP = App::Tools::TrsfToFrame(pos);
+        _kinematic.MoveTCP(newTCP);
+        SetActualPosition();
+    }
+
+    void CollectionShapes::MoveSegment(int numberSegment, double newPosition)
+    {
+        _kinematic.MoveSegment(numberSegment,newPosition);
+        SetActualPosition();
     }
 
     bool CollectionShapes::IsEmpty()
     {
-        return _data.empty()
-    }
-
-    int Find(Handle(AIS_InteractiveObject)& object)
-    {
-        int i;
-        for (i = 0; i < _data.size(); i++)
-            if (_data[i].IsPart(object))
-                return i;
-
-        return -1;
+        return _data.empty();
     }
 
     void CollectionShapes::SetActualPosition()
     {
         gp_Trsf local = _basePosition;
 
-        _data[0].SetTransform(local);
+        _data[0]->SetTransform(local);
 
         auto actualPos = _kinematic.GetPosition();
         for(int i = 1; i < _data.size(); i++)
         {
             gp_Trsf temp;
-            temp.SetRotation(_data[i].GetAxis(), actualPos(i - 1) * toDegrees);
+            temp.SetRotation(_data[i]->GetAxis(), actualPos(i - 1) * toDegrees);
             local.Multiply(temp);
-            _data[i].SetTransform(local);
+            _data[i]->SetTransform(local);
         }
     }
 
-    CollectionShapes::operator NCollection_Vector< Handle(AIS_InteractiveObject)> ()
-    {
-        return _view;
-    }
-
-    //int CollectionShapes::find(opencascade::handle<AIS_InteractiveObject>& object)
-    //{
-        /*
-    int count = 0;
-    for(auto iter = begin(); iter != end(); iter++, count++)
-        if(*iter == object)
-            return count;
-
-    return -1;
-
-    return 0;
-}
-*/
-    //}
 }

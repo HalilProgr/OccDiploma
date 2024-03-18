@@ -63,9 +63,9 @@ void kinematic::init()
             qDebug() << "Error Kinematic init!";
     }
 
-    void kinematic::MoveSegment(int numberSegment, double newValue)
+    void kinematic::MoveSegment(int numberSegment, double deltaValue)
     {
-        double value = newValue * toRadians;
+        double value = _jointCur(numberSegment) + deltaValue;
         if (value < _jointMin(numberSegment))
             _temp(numberSegment) = _jointMin(numberSegment);
         else if (value > _jointMax(numberSegment))

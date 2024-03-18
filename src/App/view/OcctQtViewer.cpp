@@ -43,7 +43,7 @@
 #include <OpenGl_GraphicDriver.hxx>
 #include <OpenGl_FrameBuffer.hxx>
 
-#include "DocumentCommon.hpp"
+//#include "DocumentCommon.hpp"
 
 namespace
 {
@@ -223,12 +223,12 @@ public:
 // Function : OcctQtViewer
 // Purpose  :
 // ================================================================
-OcctQtViewer::OcctQtViewer ( DocumentCommon* document, QWidget* theParent)
+OcctQtViewer::OcctQtViewer ( App::Common::DocumentCommon* document, QWidget* theParent)
     : QOpenGLWidget (theParent),
     myIsCoreProfile (true),
     document(document)
 {
-    Handle(OpenGl_GraphicDriver) aDriver = Handle(OpenGl_GraphicDriver)::DownCast(document->getViewer()->Driver());
+    Handle(OpenGl_GraphicDriver) aDriver = Handle(OpenGl_GraphicDriver)::DownCast(document->GetViewer()->Driver());
 
     myViewCube = new AIS_ViewCube();
     myViewCube->SetViewAnimation (myViewAnimation);
@@ -237,7 +237,7 @@ OcctQtViewer::OcctQtViewer ( DocumentCommon* document, QWidget* theParent)
     myViewCube->TransformPersistence()->SetOffset2d (Graphic3d_Vec2i (100, 150));
 
     // note - window will be created later within initializeGL() callback!
-    myView = document->getViewer()->CreateView();
+    myView = document->GetViewer()->CreateView();
     myView->SetImmediateUpdate (false);
 #ifndef __APPLE__
     myView->ChangeRenderingParams().NbMsaaSamples = 4; // warning - affects performance
@@ -282,7 +282,7 @@ OcctQtViewer::~OcctQtViewer()
 {
     // hold on X11 display connection till making another connection active by glXMakeCurrent()
     // to workaround sudden crash in QOpenGLWidget destructor
-    Handle(Aspect_DisplayConnection) aDisp = document->getViewer()->Driver()->GetDisplayConnection();
+    Handle(Aspect_DisplayConnection) aDisp = document->GetViewer()->Driver()->GetDisplayConnection();
 
     // release OCCT viewer
     myView->Remove();
@@ -363,7 +363,7 @@ void OcctQtViewer::initializeGL()
         myView->SetWindow (aWindow, aGlCtx->RenderingContext());
         dumpGlInfo (true, true);
 
-        document->getContext()->Display (myViewCube, 0, 0, false);
+        document->GetContext()->Display (myViewCube, 0, 0, false);
     }
 }
 
@@ -409,6 +409,7 @@ void OcctQtViewer::mousePressEvent (QMouseEvent* theEvent)
     QOpenGLWidget::mousePressEvent (theEvent);
     const Graphic3d_Vec2i aPnt (theEvent->pos().x(), theEvent->pos().y());
     const Aspect_VKeyFlags aFlags = qtMouseModifiers2VKeys (theEvent->modifiers());
+
     if (!myView.IsNull()
         && UpdateMouseButtons (aPnt,
                               qtMouseButtons2VKeys (theEvent->buttons()),
@@ -429,17 +430,29 @@ void OcctQtViewer::mouseReleaseEvent (QMouseEvent* theEvent)
     const Graphic3d_Vec2i aPnt (theEvent->pos().x(), theEvent->pos().y());
     const Aspect_VKeyFlags aFlags = qtMouseModifiers2VKeys (theEvent->modifiers());
 
-
-    if(document->getContext()->HasDetected())
+    if (theEvent->button() == Qt::MouseButton::LeftButton)
     {
-        if (!document->minupulateActive())
+        document->myManipulator->SetModeActivationOnDetection(true);
+        document->GetContext()->SetAutomaticHilight(true);
+        Handle(AIS_InteractiveObject) selected = document->GetContext()->FirstSelectedObject();
+        if (!selected.IsNull() && selected != m_Selected)
         {
-            document->getContext()->InitDetected();
-            document->ActivateObject(document->getContext()->DetectedInteractive());
+            m_Selected = selected;
+            if (document->myManipulator->IsAttached())
+                document->myManipulator->Detach();
+            document->ActivateManipulator(m_Selected);
+            document->GetContext()->Redisplay(document->myManipulator, true);
+        }
+        else if (selected.IsNull())
+        {
+            if (document->GetContext()->IsDisplayed(document->myManipulator))
+            {
+                document->DeactivateManipulator();
+                document->GetContext()->Remove(document->myManipulator, Standard_True);
+                m_Selected = Handle(AIS_InteractiveObject)();
+            }
         }
     }
-    else
-        document->DeactivateObject();
 
     if (!myView.IsNull()
         && UpdateMouseButtons (aPnt,
@@ -460,8 +473,14 @@ void OcctQtViewer::mouseMoveEvent (QMouseEvent* theEvent)
     QOpenGLWidget::mouseMoveEvent (theEvent);
     const Graphic3d_Vec2i aNewPos (theEvent->pos().x(), theEvent->pos().y());
 
-    document->setMousePosition(theEvent->pos().x(), theEvent->pos().y(), myView);
-
+    if (theEvent->button() == Qt::MouseButton::LeftButton)
+    {
+        if (document->myManipulator->IsAttached() && document->myManipulator->HasActiveMode())
+        {
+            document->myManipulator->SetModeActivationOnDetection(false);
+            document->GetContext()->SetAutomaticHilight(false);
+        }
+    }
 
     if (!myView.IsNull()
         && UpdateMousePosition (aNewPos,
@@ -497,7 +516,7 @@ void OcctQtViewer::wheelEvent (QWheelEvent* theEvent)
             && aPickedView != myFocusView)
         {
             // switch input focus to another subview
-            OnSubviewChanged (document->getContext(), myFocusView, aPickedView);
+            OnSubviewChanged (document->GetContext(), myFocusView, aPickedView);
             updateView();
             return;
         }
@@ -573,7 +592,7 @@ void OcctQtViewer::paintGL()
     // flush pending input events and redraw the viewer
     Handle(V3d_View) aView = !myFocusView.IsNull() ? myFocusView : myView;
     aView->InvalidateImmediate();
-    FlushViewEvents(document->getContext(), aView, true);
+    FlushViewEvents(document->GetContext(), aView, true);
 }
 
 // ================================================================

@@ -7,29 +7,29 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 SOURCES += \
         algorithms/kinematic.cpp \
+        common/RobotManipulator.cpp \
         data/CollectionShapes.cpp \
         data/Segment.cpp \
-        data/reader.cpp \
+        data/Reader.cpp \
         main.cpp\
         mainwindow.cpp \
-        view/DocumentCommon.cpp \
+        common/DocumentCommon.cpp \
         view/OcctGlTools.cpp \
         view/OcctQtViewer.cpp
 
 HEADERS  += \
         algorithms/ikinematic.h \
         algorithms/kinematic.h \
+        data/CommonType.h \
+        common/RobotManipulator.h \
         data/CollectionShapes.h \
         data/Segment.h \
-        data/reader.h \
+        data/Reader.h \
         mainwindow.hpp \
-        view/DocumentCommon.hpp \
+        common/DocumentCommon.hpp \
         view/OcctGlTools.h \
         view/OcctQtViewer.h \
         common/Tools.h
-
-
-FORMS    += mainwindow.ui
 
 RESOURCES += \ # папка, содержащая ресурсы проекта(иконки)
           .qrc \

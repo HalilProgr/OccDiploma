@@ -19,6 +19,11 @@
 /// TODO
 /// возможно следует сделать класс шаблонным, где параметр шаблона - класс реализующий кинематику,
 /// пока не решил
+///
+/// Внесём несколько уточнений, под звеньями будем считать все звеняь отличные от базы!
+/// База то неподвижна - вот и нечего её дергать
+///
+///
 namespace App
 {
     namespace Data
@@ -45,17 +50,23 @@ namespace App
         ///
         ///
 
+        std::vector<std::shared_ptr<Segment>>& GetSegmnets() {return _data;}
+        std::shared_ptr<Segment> GetSegment(Handle(AIS_InteractiveObject) obj);
+
         ///
         /// \brief SetPosition
         /// \param pos
         ///
-        void SetPositionTCP(gp_Trsf pos);
+        void MoveTCP(gp_Trsf pos);
+        void MoveSegment(int numberSegment, double newPosition);
 
         ///
         /// \brief SetSegments
         /// \param segments
         ///
         void SetSegments(std::vector<Segment> segments);
+        //void AddSegment(Handle(AIS_InteractiveObject)& AISsegment, gp_Trsf coordsys);
+        //void AddSegment(Segment& segment);
 
         ///
         /// \brief IsEmpty
@@ -63,23 +74,14 @@ namespace App
         ///
         bool IsEmpty();
 
-        int Find(Handle(AIS_InteractiveObject)& object);
-
-        //void AddSegment(Handle(AIS_InteractiveObject)& AISsegment, gp_Trsf coordsys);
-        //void AddSegment(Segment& segment);
-
-        //Segment& operator[](size_t i) {};
-
-        //void SetSegmentsPosition(std::vector<gp_Trsf> newSys);
-
-        operator NCollection_Vector< Handle(AIS_InteractiveObject)>();
-
     private:
         void SetActualPosition();
 
     private:
-        Kinematic::kinematic _kinematic;
-        std::vector<Segment> _data; // думаю лучше хранить сегменты в shared_ptr
+        bool _displaed;
+
+        Kinematic::kinematic _kinematic; // кинематика робота.
+        std::vector<std::shared_ptr<Segment>> _data; // думаю лучше хранить сегменты в shared_ptr
          // удобное отображение элементов в OCC формате, необходимо для отображения элементов в Document
         NCollection_Vector<Handle(AIS_InteractiveObject)> _view;
 

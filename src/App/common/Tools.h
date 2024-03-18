@@ -32,17 +32,29 @@ namespace App
             M(0,0),M(0,1),M(0,2),P(0),
             M(1,0),M(1,1),M(1,2),P(1),
             M(2,0),M(2,1),M(2,2),P(2));
-        /*
-        res.SetValues(
-            input(0,0),input(1,1),input(2,0),input(3,0),
-            input(1,0),input(1,1),input(2,1),input(3,1),
-            input(2,0),input(2,1),input(2,2),input(3,2));
-*/
+
         return res;
     }
 
 
+    KDL::Frame TrsfToFrame(gp_Trsf input)
+    {
+        KDL::Vector vec;
+        KDL::Rotation rot;
 
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+                rot(i, j) = input.Value(i+1, j+1);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            vec(i) = input.Value(i+1, 4);
+        }
+
+        return KDL::Frame(rot, vec);
+    }
 }}
 
 #endif // TOOLS_H

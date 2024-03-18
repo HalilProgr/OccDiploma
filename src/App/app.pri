@@ -11,10 +11,10 @@ LIBS += -L&&{IMPORT_PATH}/orocos_kdl/lib
 
 
 
-LIBS += -lC:/Qtprogect/OccDiploma/import/orocos_kdl/lib/orocos-kdl
-#LIBS += -lC:/Qtprogect/OccDiploma/import/orocos_kdl/lib/orocos-kdld
+#LIBS += -lC:/Qtprogect/OccDiploma/import/orocos_kdl/lib/orocos-kdl
+LIBS += -lC:/Qtprogect/OccDiploma/import/orocos_kdl/lib/orocos-kdld
 
-# opengl32 and user32 libs required respectively for wglGetCurrentDC() and WindowFromDC()
+#opengl32 and user32 libs required respectively for wglGetCurrentDC() and WindowFromDC()
 win32:LIBS += -lopengl32 -luser32
 
 LIBS += -lTKernel -lTKGeomBase -lTKGeomAlgo -lTKG2d -lTKV3d -lTKG3d  -lTKHLR -lTKService -lTKMath -lTKBRep -lTKTopAlgo -lTKOpenGl -lTKPrim -lTKShHealing -lTKMesh

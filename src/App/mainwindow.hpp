@@ -5,13 +5,14 @@
 #include <QGroupBox>
 #include <QTextEdit>
 
-#include "ui_mainwindow.h"
-#include "view/DocumentCommon.hpp"
+#include "common/DocumentCommon.hpp"
 #include "view/OcctQtViewer.h"
 
 #include "data/CollectionShapes.h"
 
 #include "algorithms/kinematic.h"
+#include <QMainWindow>
+
 
 class View;
 class GeomWidget;
@@ -26,9 +27,12 @@ public:
     ~ApplicationCommonWindow();
 
 private:
-    App::Data::CollectionShapes shapes;
 
-    DocumentCommon* document;
+    void Init();
+
+    std::shared_ptr<App::Data::CollectionShapes> shapes;
+
+    App::Common::DocumentCommon* document;
     OcctQtViewer* viewer;
 };
 
