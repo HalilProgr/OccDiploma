@@ -1,4 +1,4 @@
-#include "mainwindow.hpp"
+#include "mainwindow.h"
 
 #include <QVBoxLayout>
 #include <QFrame>
@@ -7,11 +7,11 @@
 #include <AIS_Shape.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 
-#include "data/Segment.h"
+#include "src/data/Segment.h"
 
-#include "algorithms/kinematic.h"
+#include "src/algorithms/kinematic.h"
 
-#include "common/DocumentCommon.hpp"
+#include "src/common/DocumentCommon.h"
 
 ApplicationCommonWindow::ApplicationCommonWindow()
     : QMainWindow (nullptr)
@@ -33,7 +33,6 @@ ApplicationCommonWindow::~ApplicationCommonWindow()
 void ApplicationCommonWindow::Init()
 {
     shapes = std::make_shared<App::Data::CollectionShapes>();
-    shapes->Init();
     document->AddDynamicObjects(shapes);
     document->DislayAll();
 }

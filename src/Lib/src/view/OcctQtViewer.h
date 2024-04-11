@@ -30,7 +30,7 @@
 #include <AIS_ViewController.hxx>
 #include <V3d_View.hxx>
 
-#include "common/DocumentCommon.hpp"
+#include "src/common/DocumentCommon.h"
 
 class AIS_ViewCube;
 //class App::CommoDocumentCommon;

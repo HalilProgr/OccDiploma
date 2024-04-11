@@ -2,7 +2,7 @@
 #define COLLECTIONSHAPES_H
 
 #include "Segment.h"
-#include "algorithms/kinematic.h"
+#include "../algorithms/kinematic.h"
 // временные #include для загрузки объектов. Далее метод init будет удалён.
 #include <STEPCAFControl_Reader.hxx>
 #include <STEPCAFControl_Controller.hxx>
@@ -38,18 +38,6 @@ namespace App
     public:
         CollectionShapes();
 
-        ///
-        /// \brief Временный метод.
-        ///  уёдет в ридер.
-        Handle( XCAFDoc_ColorTool) aColorTool;
-        Handle( XCAFDoc_ShapeTool) aShapeTool;
-        ///
-        void Init();
-        std::vector<Handle (AIS_InteractiveObject)> ReadFile(const std::string& theStepName);
-        void Visit(const TDF_Label& theLabel, std::vector<Handle (AIS_InteractiveObject)>& outVec); // Почему такое название ?!
-        ///
-        ///
-
         std::vector<std::shared_ptr<Segment>>& GetSegmnets() {return _data;}
         std::shared_ptr<Segment> GetSegment(Handle(AIS_InteractiveObject) obj);
 
@@ -64,9 +52,7 @@ namespace App
         /// \brief SetSegments
         /// \param segments
         ///
-        void SetSegments(std::vector<Segment> segments);
-        //void AddSegment(Handle(AIS_InteractiveObject)& AISsegment, gp_Trsf coordsys);
-        //void AddSegment(Segment& segment);
+        void SetSegments(std::vector<std::shared_ptr<Segment>> segments);
 
         ///
         /// \brief IsEmpty

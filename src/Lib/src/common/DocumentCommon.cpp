@@ -1,4 +1,4 @@
-#include "DocumentCommon.hpp"
+#include "DocumentCommon.h"
 
 #include <Standard_WarningsDisable.hxx>
 #include <QApplication>

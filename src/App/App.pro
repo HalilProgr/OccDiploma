@@ -1,43 +1,32 @@
+include( ../../common.pri )
+include( ./app.pri )
+
 QT       +=widgets core gui opengl openglwidgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = App
 TEMPLATE = app
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
 SOURCES += \
-        algorithms/kinematic.cpp \
-        common/RobotManipulator.cpp \
-        data/CollectionShapes.cpp \
-        data/Segment.cpp \
-        data/Reader.cpp \
         main.cpp\
-        mainwindow.cpp \
-        common/DocumentCommon.cpp \
-        view/OcctGlTools.cpp \
-        view/OcctQtViewer.cpp
+        mainwindow.cpp
 
 HEADERS  += \
-        algorithms/ikinematic.h \
-        algorithms/kinematic.h \
-        data/CommonType.h \
-        common/RobotManipulator.h \
-        data/CollectionShapes.h \
-        data/Segment.h \
-        data/Reader.h \
-        mainwindow.hpp \
-        common/DocumentCommon.hpp \
-        view/OcctGlTools.h \
-        view/OcctQtViewer.h \
-        common/Tools.h
+        $${LIB_PATH}/src/algorithms/ikinematic.h \
+        $${LIB_PATH}/src/algorithms/kinematic.h \
+        $${LIB_PATH}/src/data/CommonType.h \
+        $${LIB_PATH}/src/data/CollectionShapes.h \
+        $${LIB_PATH}/src/data/Segment.h \
+        $${LIB_PATH}/src/common/RobotManipulator.h \
+        $${LIB_PATH}/src/common/DocumentCommon.hpp \
+        $${LIB_PATH}/src/common/Tools.h \
+        $${LIB_PATH}/src/common/Reader.h \
+        $${LIB_PATH}/src/view/OcctGlTools.h \
+        $${LIB_PATH}/src/view/OcctQtViewer.h \
+        mainwindow.h
 
 RESOURCES += \ # папка, содержащая ресурсы проекта(иконки)
           .qrc \
-
-include( ../../common.pri )
-include( ./app.pri )
-
-#LIBS += -lMyLib$${LIB_SUFFIX}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

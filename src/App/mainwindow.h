@@ -5,12 +5,11 @@
 #include <QGroupBox>
 #include <QTextEdit>
 
-#include "common/DocumentCommon.hpp"
-#include "view/OcctQtViewer.h"
+#include "src/common/DocumentCommon.h"
+#include "src/view/OcctQtViewer.h"
+#include "src/data/CollectionShapes.h"
+#include "src/algorithms/kinematic.h"
 
-#include "data/CollectionShapes.h"
-
-#include "algorithms/kinematic.h"
 #include <QMainWindow>
 
 

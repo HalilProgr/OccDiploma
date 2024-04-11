@@ -2,6 +2,7 @@
 #define KINEMATIC_H
 
 #include "ikinematic.h"
+#include "src/data/Segment.h"
 #include "kdl/chain.hpp"
 #include "kdl/chainfksolverpos_recursive.hpp"
 #include "kdl/chainiksolvervel_pinv.hpp"
@@ -19,10 +20,11 @@ namespace App
         ~kinematic() = default;
 
         ///
-        /// \brief Временная инициализация (MOC, далее будет удавлено)
+        /// \brief SetSegments
+        /// \param segments
         ///
-        void init();
-
+        void Init(std::vector<std::shared_ptr<Data::Segment>>& segments);
+        \
         ///
         /// \brief Переместить звено
         /// \param Номер звена
@@ -55,6 +57,15 @@ namespace App
         }
 
     private:
+
+        ///
+        /// \brief SegmentToKDLSegment
+        /// \param count
+        /// \param mode
+        /// \return
+        ///
+        KDL::Segment SegmentToKDLSegment(int count, std::shared_ptr<Data::Segment>& ptrSegment);
+
         ///
         /// \brief Алгоритм решения прямой задачи кинематики
         ///

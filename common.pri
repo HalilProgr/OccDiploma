@@ -10,6 +10,7 @@ CONFIG(debug, debug|release) {
     BUILD_FLAG = release
 }
 
+LIB_PATH = $${PROJECT_ROOT_PATH}/src/Lib
 LIBS_PATH = $${PROJECT_ROOT_PATH}/lib.$${OS_SUFFIX}/
 INC_PATH = $${PROJECT_ROOT_PATH}/include/
 IMPORT_PATH = $${PROJECT_ROOT_PATH}/import/
@@ -22,7 +23,6 @@ MOC_DIR = $${BUILD_PATH}/moc/
 OBJECTS_DIR = $${BUILD_PATH}/obj/
 
 LIBS += -L$${LIBS_PATH}/
-INCLUDEPATH += $${INC_PATH}/
 INCLUDEPATH += $${IMPORT_PATH}/
 
-linux-g++: QMAKE_CXXFLAGS += -std=c++11
+linux-g++: QMAKE_CXXFLAGS += -std=c++17

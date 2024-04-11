@@ -9,8 +9,8 @@
 #include <AIS_InteractiveContext.hxx>
 #include <V3d_Viewer.hxx>
 // Тест манипулятора написанного мною ! //
-#include <common/RobotManipulator.h>
-#include <data/CollectionShapes.h>
+#include <src/common/RobotManipulator.h>
+#include <src/data/CollectionShapes.h>
 
 
 namespace App

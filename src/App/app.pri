@@ -1,32 +1,29 @@
-CASROOT = $${IMPORT_PATH}/OpenCASCADE-7.7.0-vc14-64/opencascade-7.7.0
 DESTDIR = $${BIN_PATH}/
 
-INCLUDEPATH += $${CASROOT}/inc #Подключение *.h файлов библиотеки Open Cascade
+# include headers
+INCLUDEPATH += $${IMPORT_PATH}/OpenCASCADE-7.7.0-vc14-64/opencascade-7.7.0/inc
 INCLUDEPATH += $${IMPORT_PATH}/orocos_kdl/include
 INCLUDEPATH += $${IMPORT_PATH}/Eigen3/include/eigen3
-LIBS += -L$${CASROOT}/win64/vc14/lib/ #Подключение пути до статических библиотек *.lib Open Cascade
+# include path to myLib
+INCLUDEPATH += $${LIB_PATH}
 
 
-LIBS += -L&&{IMPORT_PATH}/orocos_kdl/lib
+#include libs path
+LIBS += -L$${IMPORT_PATH}/OpenCASCADE-7.7.0-vc14-64/opencascade-7.7.0/win64/vc14/lib/ #Подключение пути до статических библиотек *.lib Open Cascade
+LIBS += -L$${IMPORT_PATH}/orocos_kdl/lib/
+LIBS += -L$${LIBS_PATH}/
 
+# MyLib
+LIBS += -lMyLib$${LIB_SUFFIX}
 
-
-#LIBS += -lC:/Qtprogect/OccDiploma/import/orocos_kdl/lib/orocos-kdl
-LIBS += -lC:/Qtprogect/OccDiploma/import/orocos_kdl/lib/orocos-kdld
+# KDL
+LIBS += -lorocos-kdl$${LIB_SUFFIX}
 
 #opengl32 and user32 libs required respectively for wglGetCurrentDC() and WindowFromDC()
 win32:LIBS += -lopengl32 -luser32
 
-LIBS += -lTKernel -lTKGeomBase -lTKGeomAlgo -lTKG2d -lTKV3d -lTKG3d  -lTKHLR -lTKService -lTKMath -lTKBRep -lTKTopAlgo -lTKOpenGl -lTKPrim -lTKShHealing -lTKMesh
-LIBS += -lTKPrim
-LIBS += -lTKernel -lTKMath -lTKTopAlgo -lTKService
-LIBS += -lTKG2d -lTKG3d -lTKV3d -lTKOpenGl
-LIBS += -lTKBRep -lTKXSBase -lTKGeomBase
-LIBS += -lTKMeshVS -lTKXSDRAW
-LIBS += -lTKLCAF -lTKXCAF -lTKCAF
-LIBS += -lTKCDF -lTKBin -lTKBinL -lTKBinXCAF -lTKXml -lTKXmlL -lTKXmlXCAF
-
 # Opencascade
+LIBS += -lTKGeomAlgo  -lTKHLR -lTKShHealing -lTKMesh
 LIBS += -lTKPrim
 LIBS += -lTKernel -lTKMath -lTKTopAlgo -lTKService
 LIBS += -lTKG2d -lTKG3d -lTKV3d -lTKOpenGl

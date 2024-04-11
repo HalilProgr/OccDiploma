@@ -1,0 +1,75 @@
+{
+    "segments":
+    [
+        {
+            "src": "C:/Qtprogect/OccDiploma/src/App/robot/kuka_base.step",
+            "jointInit" : 0.0,
+            "jointMin": 0.0,
+            "jointMax": 0.0,
+            "mode": "base",
+            "localx": 0.0,
+            "localy": 0.0,
+            "localz": 0.0
+        },
+        {
+            "src": "C:/Qtprogect/OccDiploma/src/App/robot/kuka_joint_1.step",
+            "jointInit" : 0.0,
+            "jointMin": -170,
+            "jointMax": 170,
+            "mode": "RotZ",
+            "localx": 25.0,
+            "localy": 0.0,
+            "localz": 400.0
+        },
+        {
+            "src": "C:/Qtprogect/OccDiploma/src/App/robot/kuka_joint_2.step",
+            "jointInit" : 0.0,
+            "jointMin": -100,
+            "jointMax": 135,
+            "mode": "RotY",
+            "localx": 0.0,
+            "localy": 0.0,
+            "localz": 455.0
+        },
+        {
+            "src": "C:/Qtprogect/OccDiploma/src/App/robot/kuka_joint_3.step",
+            "jointInit" : 0.0,
+            "jointMin": -210,
+            "jointMax": 66,
+            "mode": "RotY",
+            "localx": 0.0,
+            "localy": 0.0,
+            "localz": 35.0
+        },
+        {
+            "src": "C:/Qtprogect/OccDiploma/src/App/robot/kuka_joint_4.step",
+            "jointInit" : 0,
+            "jointMin": -185,
+            "jointMax": 185,
+            "mode": "RotX",
+            "localx": 420.0,
+            "localy": 0.0,
+            "localz": 0.0
+        },
+        {
+            "src": "C:/Qtprogect/OccDiploma/src/App/robot/kuka_joint_5.step",
+            "jointInit" : 0,
+            "jointMin": -120,
+            "jointMax": 120,
+            "mode": "RotY",
+            "localx": 80.0,
+            "localy": 0,
+            "localz": 0
+        },
+        {
+            "src": "C:/Qtprogect/OccDiploma/src/App/robot/kuka_joint_6.step",
+            "jointInit" : 0,
+            "jointMin": -350,
+            "jointMax": 350,
+            "mode": "RotX",
+            "localx": 0,
+            "localy": 0,
+            "localz": 0
+        }
+    ]
+} 
