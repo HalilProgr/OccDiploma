@@ -2,13 +2,12 @@
 #define KINEMATIC_H
 
 #include "ikinematic.h"
-#include "src/data/Segment.h"
 #include "kdl/chain.hpp"
 #include "kdl/chainfksolverpos_recursive.hpp"
 #include "kdl/chainiksolvervel_pinv.hpp"
 #include "kdl/ChainIkSolverPos_NR_JL.hpp"
 
-namespace App
+namespace Lib
 {
     namespace Kinematic
     {
@@ -23,7 +22,7 @@ namespace App
         /// \brief SetSegments
         /// \param segments
         ///
-        void Init(std::vector<std::shared_ptr<Data::Segment>>& segments);
+        void Init(std::vector<std::shared_ptr<Data::Segment>>& segments) override;
         \
         ///
         /// \brief Переместить звено

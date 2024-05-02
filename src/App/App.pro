@@ -18,7 +18,7 @@ HEADERS  += \
         $${LIB_PATH}/src/data/CollectionShapes.h \
         $${LIB_PATH}/src/data/Segment.h \
         $${LIB_PATH}/src/common/RobotManipulator.h \
-        $${LIB_PATH}/src/common/DocumentCommon.hpp \
+        $${LIB_PATH}/src/common/DocumentCommon.h \
         $${LIB_PATH}/src/common/Tools.h \
         $${LIB_PATH}/src/common/Reader.h \
         $${LIB_PATH}/src/view/OcctGlTools.h \

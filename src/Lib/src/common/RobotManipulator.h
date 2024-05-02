@@ -3,7 +3,7 @@
 
 #include <AIS_Manipulator.hxx>
 #include <AIS_ManipulatorMode.hxx>
-#include "src/data/CollectionShapes.h"
+#include "src/data/Manipulator.h"
 #include "src/data/Segment.h"
 #include "src/data/CommonType.h"
 
@@ -11,7 +11,7 @@
 /// Какой же я крутой! Я понял как работает эта фигня!!! УРА УРА УРА УРА УРА УРА УРА!
 /// Женщины встньте в ряд! Я Вас жду!
 ///
-namespace App
+namespace Lib
 {
     namespace Common
     {
@@ -42,9 +42,8 @@ namespace App
             /// \param crsys система координат звена
             /// \param mode режим звена
             ///
-            void Attach(std::shared_ptr<App::Data::CollectionShapes>& collection,
-                        std::shared_ptr<App::Data::Segment>& segment,
-                        Handle(AIS_InteractiveObject)& objToCon);
+            void Attach(std::shared_ptr<Lib::Data::Manipulator>& collection,
+                        Data::Manipulator::DescriptionSegment segment);
 
             ///
             /// \brief Detach
@@ -52,11 +51,12 @@ namespace App
             void Detach();
 
         private:
-            void SetMode(App::Data::Mode mode);
+            void SetMode(Lib::Data::Mode mode);
 
-            std::shared_ptr<App::Data::CollectionShapes> _actualCollection;
-            App::Data::Mode _mode;
-            int _numberSegment;
+            std::shared_ptr<Lib::Data::Manipulator> _actualCollection;
+            Lib::Data::Mode _mode;
+
+            Data::Manipulator::DescriptionSegment _descp;
         };
 
 }}

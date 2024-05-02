@@ -3,22 +3,14 @@
 
 #include <AIS_InteractiveObject.hxx>
 #include <gp_Trsf.hxx>
+#include <kdl/frames.hpp>
 #include "src/data/CommonType.h"
-///
-/// Нумерация сегментов начинается от -1 до N.
-/// -1 номер базы.
-/// 0-N номера сегментов.
-///
 
-namespace App
+
+namespace Lib
 {
     namespace Data
     {
-
-    ///
-    /// \brief The Mode enum
-    ///
-
     ///
     /// \brief Класс полноностью описывающий звено
     ///
@@ -35,6 +27,7 @@ namespace App
             double max;
             double min;
         };
+
         ///
         /// \brief Констурктор
         /// \param shapes Фигуры для инициализации сегмента
@@ -44,8 +37,7 @@ namespace App
         Segment(std::vector<Handle (AIS_InteractiveObject)> shapes = {},
                 gp_Pnt crsys = {},
                 Mode mode = Mode::none,
-                Limit limit = Limit(),
-                int numberSegment = -1);
+                Limit limit = Limit());
 
         ///
         /// \brief IsPart
@@ -53,6 +45,7 @@ namespace App
         bool IsPart (Handle(AIS_InteractiveObject)& object);
 
         // Сетеры
+        void SetGeom(double x, double y, double z);
         void SetShapes (std::vector<Handle (AIS_InteractiveObject)> shapes);
         void SetTransform (gp_Trsf& newPos);
         void SetMode (Mode newMode);
@@ -60,16 +53,20 @@ namespace App
         void SetLimitations(Limit limit);
 
         // Гетеры
+        KDL::Vector GetGeom();
         Mode GetMode();
         gp_Ax1 GetAxis();
         Limit GetLimitations();
-        std::vector<Handle (AIS_InteractiveObject)>& GetAISShapes();
+        gp_Trsf GetTransform();
+        std::vector<Handle (AIS_InteractiveObject)> GetAISShapes();
 
         void AddAISShape (Handle (AIS_InteractiveObject) shape);
 
     private:
+        KDL::Vector _geom;
         std::vector<Handle (AIS_InteractiveObject)> _objects; // Сегмент может состояить из нескольких объектов
         gp_Ax1 _coorsys;
+        gp_Trsf _currentTransform;
         Mode _mode;
         Limit _limit;
     };

@@ -3,17 +3,16 @@
 
 #include <Standard_WarningsDisable.hxx>
 #include <QObject>
-#include <QList>
-#include <Standard_WarningsRestore.hxx>
 
 #include <AIS_InteractiveContext.hxx>
 #include <V3d_Viewer.hxx>
+#include <AIS_ViewCube.hxx>
 // Тест манипулятора написанного мною ! //
 #include <src/common/RobotManipulator.h>
-#include <src/data/CollectionShapes.h>
+#include <src/data/Manipulator.h>
 
 
-namespace App
+namespace Lib
 {
     namespace Common
     {
@@ -47,16 +46,16 @@ namespace App
         void ActivateManipulator(Handle(AIS_InteractiveObject) object);
         void DeactivateManipulator();
 
-        void AddDynamicObjects(std::shared_ptr<App::Data::CollectionShapes> collection);
+        void AddDynamicObjects(std::shared_ptr<Lib::Data::Manipulator> collection);
 
     private:
         Handle(V3d_Viewer) Viewer ();
 
     public:
-        Handle(App::Common::RobotManipulator) myManipulator;
+        Handle(Common::RobotManipulator) myManipulator;
 
     private:
-        std::vector<std::shared_ptr<App::Data::CollectionShapes>> dynamicObjects;
+        std::vector<std::shared_ptr<Data::Manipulator>> dynamicObjects;
 
         Handle(V3d_Viewer)             myViewer;
         Handle(AIS_InteractiveContext) myContext;

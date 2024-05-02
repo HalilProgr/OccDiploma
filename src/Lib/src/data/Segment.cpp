@@ -1,13 +1,12 @@
 #include "Segment.h"
 
-namespace App::Data
+namespace Lib::Data
 {
 
     Segment::Segment(std::vector<Handle (AIS_InteractiveObject)> shapes,
                  gp_Pnt crsys,
                  Mode mode,
-                 Limit limit,
-                 int numberSegment)
+                 Limit limit)
         : _objects(shapes),
           _mode(mode),
           _limit(limit)
@@ -34,6 +33,11 @@ namespace App::Data
         }
     }
 
+    void Segment::SetGeom(double x, double y, double z)
+    {
+        _geom = KDL::Vector(x, y, z);
+    }
+
     bool Segment::IsPart(Handle(AIS_InteractiveObject)& object)
     {
         for(auto& element : _objects)
@@ -45,8 +49,10 @@ namespace App::Data
 
     void Segment::SetTransform(gp_Trsf& newPos)
     {
+        _currentTransform = newPos;
+
         for(auto& element : _objects)
-            element->SetLocalTransformation(newPos);
+            element->SetLocalTransformation(_currentTransform);
     }
 
     void Segment::SetMode(Mode newMode)
@@ -64,6 +70,11 @@ namespace App::Data
         _limit = limit;
     }
 
+    KDL::Vector Segment::GetGeom()
+    {
+        return _geom;
+    }
+
     gp_Ax1 Segment::GetAxis()
     {
         return _coorsys;
@@ -72,6 +83,11 @@ namespace App::Data
     Segment::Limit Segment::GetLimitations()
     {
         return _limit;
+    }
+
+    gp_Trsf Segment::GetTransform()
+    {
+        return _currentTransform;
     }
 
     Mode Segment::GetMode()
@@ -89,7 +105,7 @@ namespace App::Data
         _objects.push_back(shape);
     }
 
-    std::vector<Handle (AIS_InteractiveObject)>& Segment::GetAISShapes()
+    std::vector<Handle (AIS_InteractiveObject)> Segment::GetAISShapes()
     {
         return _objects;
     }

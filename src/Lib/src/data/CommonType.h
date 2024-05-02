@@ -2,7 +2,7 @@
 #define COMMONTYPE_H
 
 
-namespace App
+namespace Lib
 {
     namespace Data
     {

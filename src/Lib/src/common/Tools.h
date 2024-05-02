@@ -7,22 +7,15 @@
 #include <gp_Ax1.hxx>
 #include "src/data/CommonType.h"
 
-//! x' = a11 x + a12 y + a13 z + a14
-//! y' = a21 x + a22 y + a23 z + a24
-//! z' = a31 x + a32 y + a33 z + a34
-/**
-    \brief represents a frame transformation in 3D space (rotation + translation)
 
-    if V2 = Frame*V1 (V2 expressed in frame A, V1 expressed in frame B)
-    then V2 = Frame.M*V1+Frame.p
-
-    Frame.M contains columns that represent the axes of frame B wrt frame A
-    Frame.p contains the origin of frame B expressed in frame A.
-*/
-namespace App
+namespace Lib
 {
     namespace Tools
     {
+
+    void printFrame(KDL::Frame& input);
+
+    void printTransform(gp_Trsf& input);
 
     gp_Ax1 Axis(gp_Pnt point, Data::Mode mode);
 
@@ -30,7 +23,7 @@ namespace App
 
     gp_Trsf FrameToTrsf (KDL::Frame& input );
 
-    KDL::Frame TrsfToFrame(gp_Trsf input);
+    KDL::Frame TrsfToFrame(gp_Trsf& input);
 
 }}
 

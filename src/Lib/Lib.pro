@@ -16,10 +16,11 @@ SOURCES += \
             src/algorithms/kinematic.cpp \
             src/common/Reader.cpp \
             src/common/RobotManipulator.cpp \
-            src/common/Tool.cpp \
-            src/data/CollectionShapes.cpp \
+            src/common/Tools.cpp \
+            src/data/Manipulator.cpp \
             src/data/Segment.cpp \
             src/common/DocumentCommon.cpp \
+            src/data/Tool.cpp \
             src/view/OcctGlTools.cpp \
             src/view/OcctQtViewer.cpp
 
@@ -30,8 +31,9 @@ HEADERS += \
            src/common/Reader.h \
            src/data/CommonType.h \
            src/common/RobotManipulator.h \
-           src/data/CollectionShapes.h \
+           src/data/Manipulator.h \
            src/data/Segment.h \
+           src/data/Tool.h \
            src/view/OcctGlTools.h \
            src/view/OcctQtViewer.h \
            src/common/Tools.h

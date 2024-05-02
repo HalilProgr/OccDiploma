@@ -15,7 +15,7 @@
 
 #include <TCollection_AsciiString.hxx>
 
-namespace App::Common
+namespace Lib::Common
 {
 
     Handle(V3d_Viewer) DocumentCommon::Viewer()
@@ -42,7 +42,7 @@ namespace App::Common
     DocumentCommon::DocumentCommon(QWidget* theApp)
         : QObject (theApp), myContextIsEmpty(true), ObjectActiveted(false)
     {
-        myManipulator = new App::Common::RobotManipulator;
+        myManipulator = new Lib::Common::RobotManipulator;
         myViewer = Viewer();
         myContext = new AIS_InteractiveContext(myViewer);
     }
@@ -59,32 +59,48 @@ namespace App::Common
 
     void DocumentCommon::ActivateManipulator(Handle(AIS_InteractiveObject) object)
     {
-        for (auto& dun : dynamicObjects)
-            for ( auto& seg : dun->GetSegmnets())
-                if( seg->IsPart(object))
-                {
-                    myManipulator->Attach(dun, seg, object);
-                    ObjectActiveted = true;
-                    return;
-                }
+        if (ObjectActiveted)
+        {
+            myManipulator->StopTransform();
+            myManipulator->Detach();
+            ObjectActiveted = false;
+        }
+
+        for (auto& robot : dynamicObjects)
+        {
+            if (Data::Manipulator::DescriptionSegment descrp = robot->FindSegment(object); descrp.segmentPtr != nullptr || descrp.toolPtr != nullptr)
+            {
+                myManipulator->Attach(robot, descrp);
+                ObjectActiveted = true;
+                return;
+            }
+        }
     }
 
+    void DocumentCommon::DeactivateManipulator()
+    {
+        if (ObjectActiveted)
+        {
+            myManipulator->StopTransform();
+            myManipulator->Detach();
+            ObjectActiveted = false;
+        }
+    }
+
+    /// Под вопросом реализация????
     void DocumentCommon::DislayAll()
     {
         myContext->RemoveAll(Standard_False);
 
         for (auto& el : dynamicObjects)
         {
-            for (auto& seg : el->GetSegmnets())
-            {
-                for (auto& ais : seg->GetAISShapes())
-                    myContext->Display(ais, 0);
-            }
+            for (auto& ais : el->GetView())
+                myContext->Display(ais, 0);
         }
         myViewer->Redraw();
     }
 
-    void DocumentCommon::AddDynamicObjects(std::shared_ptr<App::Data::CollectionShapes> collection)
+    void DocumentCommon::AddDynamicObjects(std::shared_ptr<Lib::Data::Manipulator> collection)
     {
         dynamicObjects.push_back(collection);
     }
@@ -94,15 +110,6 @@ namespace App::Common
     {
         myContext->RemoveAll(Standard_True);
         myContextIsEmpty = true;
-    }
-
-    void DocumentCommon::DeactivateManipulator()
-    {
-        if (ObjectActiveted)
-        {
-            myManipulator->Detach();
-            ObjectActiveted = false;
-        }
     }
 
     const Handle(AIS_InteractiveContext)& DocumentCommon::GetContext() { return myContext; }

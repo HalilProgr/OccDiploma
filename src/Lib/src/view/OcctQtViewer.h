@@ -24,7 +24,6 @@
 
 #include <Standard_WarningsDisable.hxx>
 #include <QOpenGLWidget>
-#include <Standard_WarningsRestore.hxx>
 
 #include <AIS_InteractiveContext.hxx>
 #include <AIS_ViewController.hxx>
@@ -33,7 +32,6 @@
 #include "src/common/DocumentCommon.h"
 
 class AIS_ViewCube;
-//class App::CommoDocumentCommon;
 
 //! OCCT 3D View.
 class OcctQtViewer : public QOpenGLWidget, public AIS_ViewController
@@ -42,7 +40,7 @@ class OcctQtViewer : public QOpenGLWidget, public AIS_ViewController
 public:
 
     //! Main constructor.
-    OcctQtViewer (App::Common::DocumentCommon* document, QWidget* theParent = nullptr);
+    OcctQtViewer (Lib::Common::DocumentCommon* document, QWidget* theParent = nullptr);
 
     //! Destructor.
     virtual ~OcctQtViewer();
@@ -94,7 +92,7 @@ private:
                                   const Handle(V3d_View)& theView) override;
 
 private:
-    App::Common::DocumentCommon* document;
+    Lib::Common::DocumentCommon* document;
 
     Handle(V3d_View)               myView;
     Handle(AIS_ViewCube)           myViewCube;

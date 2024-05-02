@@ -1,16 +1,14 @@
 #ifndef IKINEMATIC_H
 #define IKINEMATIC_H
 
-#define _USE_MATH_DEFINES
-#define toRadians M_PI/180.0
-#define toDegrees (180.0/M_PI)
-
 #include <cmath>
 #include <kdl/segment.hpp>
 #include <kdl/frameacc.hpp>
 #include <kdl/jntarray.hpp>
+#include "src/data/Segment.h"
 
-namespace App
+
+namespace Lib
 {
     namespace Kinematic
     {
@@ -23,6 +21,12 @@ namespace App
     public:
         IKinematic() = default;
         virtual ~IKinematic() = default;
+
+        ///
+        /// \brief Init
+        /// \param segments
+        ///
+        virtual void Init(std::vector<std::shared_ptr<Data::Segment>>& segments) = 0;
 
         ///
         /// \brief Переместить звено

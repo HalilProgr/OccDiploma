@@ -1,4 +1,4 @@
-#include "CollectionShapes.h"
+#include "Manipulator.h"
 
 #include <OSD.hxx>
 #include <AIS_Trihedron.hxx>
@@ -7,7 +7,6 @@
 #include <AIS_ColoredShape.hxx>
 #include <AIS_ColoredDrawer.hxx>
 #include <BRepLib.hxx>
-//#include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -93,58 +92,105 @@
 
 #include <src/common/Tools.h>
 
+#define _USE_MATH_DEFINES
+#define toRadians (M_PI/180.0)
+#define toDegrees (180.0/M_PI)
 
-namespace App::Data
+
+namespace Lib::Data
 {
 
-using App::Tools::FrameToTrsf;
+using Lib::Tools::FrameToTrsf;
 
-CollectionShapes::CollectionShapes()
-{}
+    Manipulator::Manipulator(){}
 
-    std::shared_ptr<Segment> CollectionShapes::GetSegment(Handle(AIS_InteractiveObject) obj)
+    Manipulator::DescriptionSegment Manipulator::FindSegment(Handle(AIS_InteractiveObject) obj)
     {
-        for (auto& seg : _data)
+        DescriptionSegment res;
+
+        for (int i = 0; i < _data.size(); i++)
         {
-            if (seg->IsPart(obj))
-                return seg;
+            if (_data[i]->IsPart(obj))
+            {
+                if (_data[i]->GetMode() == Mode::base)
+                    return res;
+
+                res.numberSegment = i -1;
+                res.segmentPtr = _data[i];
+                return res;
+            }
         }
 
-        return std::shared_ptr<Segment>();
+        if (_tool->IsPart(obj))
+        {
+            res.isTool = true;
+            res.toolPtr = _tool;
+            return res;
+        }
+
+        return res;
     }
 
-    void CollectionShapes::MoveTCP(gp_Trsf pos)
+    void Manipulator::MoveTCP(gp_Trsf pos)
     {
-        KDL::Frame newTCP = App::Tools::TrsfToFrame(pos);
+        KDL::Frame newTCP = Lib::Tools::TrsfToFrame(pos);
         _kinematic.MoveTCP(newTCP);
+        KDL::Frame actualTCP = _kinematic.GetTCP();
+        _tool->SetTCP(Lib::Tools::FrameToTrsf(actualTCP));
         SetActualPosition();
     }
 
-    void CollectionShapes::MoveSegment(int numberSegment, double newPosition)
+    void Manipulator::MoveSegment(int numberSegment, double newPosition)
     {
         _kinematic.MoveSegment(numberSegment,newPosition);
         SetActualPosition();
     }
 
-    bool CollectionShapes::IsEmpty()
+    void Manipulator::SetSegments(std::vector<std::shared_ptr<Segment> > segments)
+    {
+        _data = segments;
+        _kinematic.Init(segments);
+
+        for (auto& seg : _data)
+            for (auto& ais : seg->GetAISShapes())
+                _view.push_back(ais);
+
+        if (_tool != nullptr) SetActualPosition();
+    }
+
+    void Manipulator::SetTool(std::shared_ptr<Tool> tool)
+    {
+        _tool = tool;
+        _view.push_back(_tool->GetAISShape());
+        SetActualPosition();
+    }
+
+    std::vector<Handle (AIS_InteractiveObject)>& Lib::Data::Manipulator::GetView()
+    {
+        return _view;
+    }
+
+    bool Manipulator::IsEmpty()
     {
         return _data.empty();
     }
 
-    void CollectionShapes::SetActualPosition()
+    void Manipulator::SetActualPosition()
     {
-        gp_Trsf local = _basePosition;
-
-        _data[0]->SetTransform(local);
+        gp_Trsf local = _data[0]->GetTransform();
 
         auto actualPos = _kinematic.GetPosition();
         for(int i = 1; i < _data.size(); i++)
         {
-            gp_Trsf temp;
-            temp.SetRotation(_data[i]->GetAxis(), actualPos(i - 1) * toDegrees);
+            gp_Trsf temp = _data[i]->GetTransform();
+            temp.SetRotation(_data[i]->GetAxis(), actualPos(i - 1));
             local.Multiply(temp);
             _data[i]->SetTransform(local);
         }
+
+        gp_Trsf temp = _tool->GetTransform();
+        temp.Multiply(local);
+        _tool->SetTransform(temp);
     }
 
 }

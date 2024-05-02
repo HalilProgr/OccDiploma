@@ -7,17 +7,13 @@
 
 #include "src/common/DocumentCommon.h"
 #include "src/view/OcctQtViewer.h"
-#include "src/data/CollectionShapes.h"
-#include "src/algorithms/kinematic.h"
+#include "src/data/Manipulator.h"
+#include "src/common/Reader.h"
 
 #include <QMainWindow>
 
 
-class View;
-class GeomWidget;
-class DocumentCommon;
-
-//! Qt main window which include OpenCASCADE for its central widget.
+//
 class ApplicationCommonWindow: public QMainWindow
 {
     Q_OBJECT
@@ -29,10 +25,13 @@ private:
 
     void Init();
 
-    std::shared_ptr<App::Data::CollectionShapes> shapes;
 
-    App::Common::DocumentCommon* document;
+    Lib::Common::Reader _reader;
+    std::shared_ptr<Lib::Data::Manipulator> shapes;
+
+    Lib::Common::DocumentCommon* document;
     OcctQtViewer* viewer;
+    OcctQtViewer* viewer1;
 };
 
 #endif // MAINWINDOW_H

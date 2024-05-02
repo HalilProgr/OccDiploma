@@ -1,64 +1,71 @@
 #include "robotmanipulator.h"
 #include <gp_Trsf.hxx>
+#include <gp_Quaternion.hxx>
 #include <QDebug>
+#include <AIS_InteractiveContext.hxx>
+#include "Tools.h"
 
 
-namespace App::Common
+namespace Lib::Common
 {
 
     RobotManipulator::RobotManipulator()
     : AIS_Manipulator()
     {
-        SetPart (0, AIS_ManipulatorMode::AIS_MM_Scaling, Standard_False);
-        SetPart (1, AIS_ManipulatorMode::AIS_MM_Scaling, Standard_False);
-        SetPart (2, AIS_ManipulatorMode::AIS_MM_Scaling, Standard_False);
-
-        SetPart (0, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
-        SetPart (1, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
-        SetPart (2, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
-
-        SetPart (0, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
-        SetPart (1, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
-        SetPart (2, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
+        for (int i = 0; i < 4; i++)
+        {
+            SetPart (i, AIS_ManipulatorMode::AIS_MM_Scaling, Standard_False);
+            SetPart (i, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
+            SetPart (i, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
+        }
     }
 
     RobotManipulator::RobotManipulator(const gp_Ax2& thePosition)
         : AIS_Manipulator(thePosition)
     {
-        SetPart (0, AIS_ManipulatorMode::AIS_MM_Scaling, Standard_False);
-        SetPart (1, AIS_ManipulatorMode::AIS_MM_Scaling, Standard_False);
-        SetPart (2, AIS_ManipulatorMode::AIS_MM_Scaling, Standard_False);
-
-        SetPart (0, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
-        SetPart (1, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
-        SetPart (2, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
-
-        SetPart (0, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
-        SetPart (1, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
-        SetPart (2, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
+        for (int i = 0; i < 4; i++)
+        {
+            SetPart (i, AIS_ManipulatorMode::AIS_MM_Scaling, Standard_False);
+            SetPart (i, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
+            SetPart (i, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
+        }
     }
 
-    void RobotManipulator::Attach(std::shared_ptr<App::Data::CollectionShapes>& collection,
-                                  std::shared_ptr<App::Data::Segment>& segment,
-                                  Handle(AIS_InteractiveObject)& objToCon)
+    void RobotManipulator::Attach(std::shared_ptr<Lib::Data::Manipulator>& collection,
+                                  Data::Manipulator::DescriptionSegment segment)
     {
-
-        SetMode(segment->GetMode());
-        //_numberSegment = segment->GetNumberSegment();
+        _descp = segment; /// Описание сигмента с которым происходит работа.
         _actualCollection = collection;
-
-        if (_mode != Data::Mode::base)
-            AIS_Manipulator::Attach(objToCon);
+        gp_Trsf temp;
+        if (_descp.isTool)
+        {
+            SetMode(_descp.toolPtr->GetMode());
+            AIS_Manipulator::Attach(segment.toolPtr->GetAISShape());
+            temp = segment.toolPtr->GetTransform();
+        }
+        else
+        {
+            SetMode(_descp.segmentPtr->GetMode());
+            AIS_Manipulator::Attach(segment.segmentPtr->GetAISShapes().front());
+            temp = segment.segmentPtr->GetTransform();
+        }
+        /// некрасиво, но удобно
+        gp_Ax2 local = Position();
+        /// debug  в общем еще переделывать.
+        Lib::Tools::printTransform(temp);
+        /// local.Transform(segment.segmentPtr->GetTransform());
+        local = local.Transformed(temp);
+        SetPosition(local);
     }
 
     void RobotManipulator::Detach()
     {
+        AIS_Manipulator::Detach();
         SetMode(Data::Mode::none);
         _actualCollection.reset();
-        _numberSegment = -1;
     }
 
-    void RobotManipulator::SetMode(App::Data::Mode mode)
+    void RobotManipulator::SetMode(Lib::Data::Mode mode)
     {
         switch(mode)
         {
@@ -75,24 +82,21 @@ namespace App::Common
             EnableMode (AIS_ManipulatorMode::AIS_MM_Rotation);
             break;
         case Data::Mode::tool:
-            SetPart (0, AIS_ManipulatorMode::AIS_MM_Translation, Standard_True);
-            SetPart (1, AIS_ManipulatorMode::AIS_MM_Translation, Standard_True);
-            SetPart (2, AIS_ManipulatorMode::AIS_MM_Translation, Standard_True);
+            for(int i = 0; i < 3; i++)
+            {
+                SetPart (i, AIS_ManipulatorMode::AIS_MM_Translation, Standard_True);
+                SetPart (i, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_True);
+            }
 
-            SetPart (0, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_True);
-            SetPart (1, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_True);
-            SetPart (2, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_True);
             EnableMode (AIS_ManipulatorMode::AIS_MM_Rotation);
             EnableMode (AIS_ManipulatorMode::AIS_MM_Translation);
             break;
         default:
-            SetPart (0, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
-            SetPart (1, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
-            SetPart (2, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
-
-            SetPart (0, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
-            SetPart (1, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
-            SetPart (2, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
+            for(int i = 0; i < 3; i++)
+            {
+                SetPart (i, AIS_ManipulatorMode::AIS_MM_Translation, Standard_False);
+                SetPart (i, AIS_ManipulatorMode::AIS_MM_Rotation, Standard_False);
+            }
         }
 
         _mode = mode;
@@ -102,43 +106,32 @@ namespace App::Common
                                          const Handle(V3d_View)& theView)
     {
         gp_Trsf aTrsf;
+        gp_Trsf temp;
         if (ObjectTransformation (thePX, thePY, theView, aTrsf))
         {
-            gp_Dir oldVDir = myStartPosition.Direction();
-            gp_Dir oldXDir = myStartPosition.XDirection();
-            gp_Dir oldYDir = myStartPosition.YDirection();
-
-            gp_Pnt aPos  = myStartPosition.Location().Transformed (aTrsf);
-
-            gp_Dir aVDir = myStartPosition.Direction().Transformed (aTrsf);
-            gp_Dir aXDir = myStartPosition.XDirection().Transformed (aTrsf);
-            gp_Dir aYDir = myStartPosition.YDirection().Transformed (aTrsf);
-
-            double angle = 0;
-
             switch (_mode)
             {
-            case App::Data::Mode::RotX:
-                angle = aVDir.AngleWithRef (oldVDir, aXDir) / 100;
-                _actualCollection->MoveSegment(_numberSegment, angle);
+            case Lib::Data::Mode::RotX:
+                _actualCollection->MoveSegment(_descp.numberSegment, aTrsf.GetRotation().X());
                 break;
-            case App::Data::Mode::RotY:
-                angle = aVDir.AngleWithRef (oldVDir, aYDir) / 100;
-                _actualCollection->MoveSegment(_numberSegment, angle);
+            case Lib::Data::Mode::RotY:
+                _actualCollection->MoveSegment(_descp.numberSegment, aTrsf.GetRotation().Y());
                 break;
-            case App::Data::Mode::RotZ:
-                angle = aXDir.AngleWithRef (oldXDir, aVDir) / 100;
-                _actualCollection->MoveSegment(_numberSegment, angle);
+            case Lib::Data::Mode::RotZ:
+                _actualCollection->MoveSegment(_descp.numberSegment, aTrsf.GetRotation().Z());
                 break;
-            case App::Data::Mode::tool:
-                _actualCollection->MoveTCP(Transformation());
+            case Lib::Data::Mode::tool:
+                std::cout << "Transform: " << std::endl;
+                Lib::Tools::printTransform(aTrsf);
+                temp = _descp.toolPtr->GetTransform();
+                std::cout << "Transform from segment: " << std::endl;
+                temp = _descp.toolPtr->GetTCP() * aTrsf;
+                Lib::Tools::printTransform(temp);
+                _actualCollection->MoveTCP(temp);
+                break;
             default:
-                angle = 0;
                 break;
             }
-
-            qDebug() << angle;
-            SetPosition (gp_Ax2 (aPos, aVDir, aXDir));
         }
 
         return aTrsf;

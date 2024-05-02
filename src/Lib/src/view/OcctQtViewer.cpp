@@ -201,7 +201,7 @@ public:
 // Function : OcctQtViewer
 // Purpose  :
 // ================================================================
-OcctQtViewer::OcctQtViewer ( App::Common::DocumentCommon* document, QWidget* theParent)
+OcctQtViewer::OcctQtViewer ( Lib::Common::DocumentCommon* document, QWidget* theParent)
     : QOpenGLWidget (theParent),
     myIsCoreProfile (true),
     document(document)
@@ -239,7 +239,7 @@ OcctQtViewer::OcctQtViewer ( App::Common::DocumentCommon* document, QWidget* the
     aDriver->ChangeOptions().contextDebug = aGlFormat.testOption (QSurfaceFormat::DebugContext);
     if (myIsCoreProfile)
     {
-        aGlFormat.setVersion (4, 5);
+        //aGlFormat.setVersion (4, 5);
     }
     aGlFormat.setProfile (myIsCoreProfile ? QSurfaceFormat::CoreProfile : QSurfaceFormat::CompatibilityProfile);
 
@@ -308,13 +308,19 @@ void OcctQtViewer::initializeGL()
     const QRect aRect = rect();
     const Graphic3d_Vec2i aViewSize (aRect.right() - aRect.left(), aRect.bottom() - aRect.top());
 
-    Handle(OpenGl_Context) aGlCtx = new OpenGl_Context();
-    if (!aGlCtx->Init (myIsCoreProfile))
+    Handle(OpenGl_GraphicDriver) aDriver = Handle(OpenGl_GraphicDriver)::DownCast (document->GetContext()->CurrentViewer()->Driver());
+    Handle(OpenGl_Context) aGlCtx = aDriver->GetSharedContext();
+    if (aGlCtx.IsNull())
     {
-        Message::SendFail() << "Error: OpenGl_Context is unable to wrap OpenGL context";
-        QMessageBox::critical (0, "Failure", "OpenGl_Context is unable to wrap OpenGL context");
-        QApplication::exit (1);
-        return;
+        aGlCtx = new OpenGl_Context();
+        if (!aGlCtx->Init (myIsCoreProfile))
+        {
+            qDebug() << "Error in INIT GL";
+            Message::SendFail() << "Error: OpenGl_Context is unable to wrap OpenGL context";
+            QMessageBox::critical (0, "Failure", "OpenGl_Context is unable to wrap OpenGL context");
+            QApplication::exit (1);
+            return;
+        }
     }
 
     Handle(Aspect_NeutralWindow) aWindow = Handle(Aspect_NeutralWindow)::DownCast (myView->Window());
@@ -529,8 +535,8 @@ void OcctQtViewer::paintGL()
 
     // wrap FBO created by QOpenGLWidget
     // get context from this (composer) view rather than from arbitrary one
-    //Handle(OpenGl_GraphicDriver) aDriver = Handle(OpenGl_GraphicDriver)::DownCast (myContext->CurrentViewer()->Driver());
-    //Handle(OpenGl_Context) aGlCtx = aDriver->GetSharedContext();
+    // Handle(OpenGl_GraphicDriver) aDriver = Handle(OpenGl_GraphicDriver)::DownCast (document->GetContext()->CurrentViewer()->Driver());
+    // Handle(OpenGl_Context) aGlCtx = aDriver->GetSharedContext();
     Handle(OpenGl_Context) aGlCtx = OcctGlTools::GetGlContext (myView);
     Handle(OpenGl_FrameBuffer) aDefaultFbo = aGlCtx->DefaultFrameBuffer();
     if (aDefaultFbo.IsNull())
