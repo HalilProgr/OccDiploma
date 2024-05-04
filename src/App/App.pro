@@ -1,7 +1,7 @@
 include( ../../common.pri )
 include( ./app.pri )
 
-QT       +=widgets core gui opengl openglwidgets
+QT       +=widgets core gui opengl
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = App
@@ -15,7 +15,6 @@ HEADERS  += \
         $${LIB_PATH}/src/algorithms/ikinematic.h \
         $${LIB_PATH}/src/algorithms/kinematic.h \
         $${LIB_PATH}/src/data/CommonType.h \
-        $${LIB_PATH}/src/data/CollectionShapes.h \
         $${LIB_PATH}/src/data/Segment.h \
         $${LIB_PATH}/src/common/RobotManipulator.h \
         $${LIB_PATH}/src/common/DocumentCommon.h \
@@ -25,8 +24,8 @@ HEADERS  += \
         $${LIB_PATH}/src/view/OcctQtViewer.h \
         mainwindow.h
 
-RESOURCES += \ # папка, содержащая ресурсы проекта(иконки)
-          .qrc \
+#RESOURCES += \ # папка, содержащая ресурсы проекта(иконки)
+#         .qrc \
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -52,7 +52,7 @@ public:
     const QString& getGlInfo() const { return myGlInfo; }
 
     //! Minial widget size.
-    virtual QSize minimumSizeHint() const override { return QSize(200, 200); }
+    virtual QSize minimumSizeHint() const override { return QSize(720, 480); }
 
     //! Default widget size.
     virtual QSize sizeHint()        const override { return QSize(720, 480); }

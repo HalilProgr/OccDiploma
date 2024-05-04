@@ -1,8 +1,10 @@
 #include "Tools.h"
 
 
-namespace Lib::Tools
+namespace Lib
 {
+    namespace Tools
+    {
 
     void printFrame(KDL::Frame& input)
     {
@@ -87,5 +89,4 @@ namespace Lib::Tools
 
         return res;
     }
-
-}
+}}

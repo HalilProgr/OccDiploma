@@ -7,10 +7,7 @@
 #include "src/data/Segment.h"
 #include "src/data/CommonType.h"
 
-///
-/// Какой же я крутой! Я понял как работает эта фигня!!! УРА УРА УРА УРА УРА УРА УРА!
-/// Женщины встньте в ряд! Я Вас жду!
-///
+
 namespace Lib
 {
     namespace Common

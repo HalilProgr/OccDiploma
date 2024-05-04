@@ -1,7 +1,8 @@
 #include "Segment.h"
 
-namespace Lib::Data
+namespace Lib
 {
+namespace Data {
 
     Segment::Segment(std::vector<Handle (AIS_InteractiveObject)> shapes,
                  gp_Pnt crsys,
@@ -109,4 +110,4 @@ namespace Lib::Data
     {
         return _objects;
     }
-}
+    }}

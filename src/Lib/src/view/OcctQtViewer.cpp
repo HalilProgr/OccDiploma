@@ -1,6 +1,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
+#include <QDebug>
 #include <OpenGl_Context.hxx>
 
 #include "OcctQtViewer.h"

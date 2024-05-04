@@ -6,7 +6,9 @@
 #include "Tools.h"
 
 
-namespace Lib::Common
+namespace Lib
+{
+namespace Common
 {
 
     RobotManipulator::RobotManipulator()
@@ -41,7 +43,7 @@ namespace Lib::Common
         {
             SetMode(_descp.toolPtr->GetMode());
             AIS_Manipulator::Attach(segment.toolPtr->GetAISShape());
-            temp = segment.toolPtr->GetTransform();
+            temp = segment.toolPtr->GetTCP();
         }
         else
         {
@@ -50,7 +52,7 @@ namespace Lib::Common
             temp = segment.segmentPtr->GetTransform();
         }
         /// некрасиво, но удобно
-        gp_Ax2 local = Position();
+        gp_Ax2 local;
         /// debug  в общем еще переделывать.
         Lib::Tools::printTransform(temp);
         /// local.Transform(segment.segmentPtr->GetTransform());
@@ -170,5 +172,4 @@ namespace Lib::Common
         }
         return Standard_False;
     }
-
-}
+}}

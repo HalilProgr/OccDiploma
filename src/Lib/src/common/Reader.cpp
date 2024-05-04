@@ -4,6 +4,7 @@
 #include <AIS_Shape.hxx>
 #include <Prs3d_LineAspect.hxx>
 #include "src/common/Tools.h"
+#include <QDebug>
 
 
 #include <BRepPrimAPI_MakePrism.hxx>
@@ -87,7 +88,9 @@
 #include <BRepTools.hxx>
 
 
-namespace Lib::Common
+namespace Lib
+{
+namespace Common
 {
 
     Reader::Reader() : _loaded(false), _path("")
@@ -105,7 +108,7 @@ namespace Lib::Common
     }
     void Reader::SetPath(QDir path)
     {
-        _path.setPath(path.filesystemAbsolutePath());
+        _path.setPath(path.absolutePath());
     }
     void Reader::SetPath(char* path)
     {
@@ -120,10 +123,10 @@ namespace Lib::Common
     bool Reader::ParseData()
     {
         // step 1
-        QFile file_obj(_path.filesystemAbsolutePath());
+        QFile file_obj(_path.absolutePath());
         if (!file_obj.open(QIODevice::ReadOnly))
         {
-            std::cout << "Failed to open " << _path.filesystemAbsolutePath() << std::endl;
+            qDebug() << "Failed to open " << _path.absolutePath();
             return false;
         }
 
@@ -322,4 +325,4 @@ namespace Lib::Common
             Visit(aShapeTool, aColorTool, c.Value(), outVec);
     }
 
-}
+    }}

@@ -2,7 +2,7 @@ include( ../../common.pri )
 include( ./lib.pri )
 
 
-QT += core gui widgets core gui opengl openglwidgets
+QT += core gui widgets core gui opengl
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 # название файла нашей статической библиотеки
 
@@ -13,10 +13,14 @@ CONFIG += staticlib
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
-            src/algorithms/kinematic.cpp \
+            src/algorithms/CubicSpline.cpp \
+            src/algorithms/Kinematic.cpp \
+            src/algorithms/SplineCurve.cpp \
             src/common/Reader.cpp \
             src/common/RobotManipulator.cpp \
             src/common/Tools.cpp \
+            src/common/Animation.cpp \
+            src/common/Controller.cpp \
             src/data/Manipulator.cpp \
             src/data/Segment.cpp \
             src/common/DocumentCommon.cpp \
@@ -25,10 +29,14 @@ SOURCES += \
             src/view/OcctQtViewer.cpp
 
 HEADERS += \
-           src/algorithms/ikinematic.h \
-           src/algorithms/kinematic.h \
+           src/algorithms/CubicSpline.h \
+           src/algorithms/Ikinematic.h \
+           src/algorithms/Kinematic.h \
+           src/algorithms/SplineCurve.h \
            src/common/DocumentCommon.h \
            src/common/Reader.h \
+           src/common/Animation.h \
+           src/common/Controller.h \
            src/data/CommonType.h \
            src/common/RobotManipulator.h \
            src/data/Manipulator.h \
@@ -42,6 +50,3 @@ win32 {
     QMAKE_TARGET_PRODUCT = My Lib
     QMAKE_TARGET_DESCRIPTION = It is my library
 }
-
-
-

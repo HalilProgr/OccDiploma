@@ -9,6 +9,7 @@
 #include "src/view/OcctQtViewer.h"
 #include "src/data/Manipulator.h"
 #include "src/common/Reader.h"
+#include "src/common/Controller.h"
 
 #include <QMainWindow>
 
@@ -25,13 +26,12 @@ private:
 
     void Init();
 
-
     Lib::Common::Reader _reader;
     std::shared_ptr<Lib::Data::Manipulator> shapes;
 
     Lib::Common::DocumentCommon* document;
+    Lib::Common::Controller* controller;
     OcctQtViewer* viewer;
-    OcctQtViewer* viewer1;
 };
 
 #endif // MAINWINDOW_H

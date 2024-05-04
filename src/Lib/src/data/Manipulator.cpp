@@ -97,8 +97,10 @@
 #define toDegrees (180.0/M_PI)
 
 
-namespace Lib::Data
+namespace Lib
 {
+namespace Data {
+
 
 using Lib::Tools::FrameToTrsf;
 
@@ -165,6 +167,11 @@ using Lib::Tools::FrameToTrsf;
         SetActualPosition();
     }
 
+    gp_Trsf Lib::Data::Manipulator::GetTCP()
+    {
+        return _tool->GetTCP();
+    }
+
     std::vector<Handle (AIS_InteractiveObject)>& Lib::Data::Manipulator::GetView()
     {
         return _view;
@@ -193,4 +200,4 @@ using Lib::Tools::FrameToTrsf;
         _tool->SetTransform(temp);
     }
 
-}
+    }}

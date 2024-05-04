@@ -15,9 +15,10 @@
 
 #include <TCollection_AsciiString.hxx>
 
-namespace Lib::Common
+namespace Lib
 {
-
+namespace Common
+{
     Handle(V3d_Viewer) DocumentCommon::Viewer()
     {
         Handle(Aspect_DisplayConnection) aDisp = new Aspect_DisplayConnection();
@@ -68,7 +69,8 @@ namespace Lib::Common
 
         for (auto& robot : dynamicObjects)
         {
-            if (Data::Manipulator::DescriptionSegment descrp = robot->FindSegment(object); descrp.segmentPtr != nullptr || descrp.toolPtr != nullptr)
+            Data::Manipulator::DescriptionSegment descrp = robot->FindSegment(object);
+            if (descrp.segmentPtr != nullptr || descrp.toolPtr != nullptr)
             {
                 myManipulator->Attach(robot, descrp);
                 ObjectActiveted = true;
@@ -116,4 +118,4 @@ namespace Lib::Common
 
     const Handle(V3d_Viewer)& DocumentCommon::GetViewer() { return myViewer; }
 
-}
+    }}
