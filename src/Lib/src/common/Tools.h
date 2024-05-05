@@ -5,6 +5,8 @@
 #include <kdl/frames.hpp>
 #include <gp_Trsf.hxx>
 #include <gp_Ax1.hxx>
+#include <gp_Quaternion.hxx>
+#include <Eigen/Dense>
 #include "src/data/CommonType.h"
 
 
@@ -21,9 +23,13 @@ namespace Lib
 
     Data::Mode Mode(QString mode);
 
-    gp_Trsf FrameToTrsf (KDL::Frame& input );
+    gp_Trsf FrameToTrsf(KDL::Frame& input );
 
     KDL::Frame TrsfToFrame(gp_Trsf& input);
+
+    Eigen::Vector3d TrsfToVector3D(gp_Trsf input);
+
+    gp_Trsf MakeTrsf(gp_Pnt point, gp_Quaternion angl);
 
 }}
 

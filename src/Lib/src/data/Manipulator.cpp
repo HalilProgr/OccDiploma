@@ -99,12 +99,40 @@
 
 namespace Lib
 {
-namespace Data {
+    namespace Data
+    {
 
+    Manipulator::Manipulator()
+    {
+        _modelKinematic = std::make_shared<Lib::Kinematic::kinematic>();
+    }
 
-using Lib::Tools::FrameToTrsf;
+    Manipulator::Manipulator(const std::vector<std::shared_ptr<Segment>> segments, const std::shared_ptr<Tool> tool)
+    {
+        _data = segments;
+        _modelKinematic = std::make_shared<Lib::Kinematic::kinematic>();
+        _modelKinematic->Init(_data);
 
-    Manipulator::Manipulator(){}
+        for (auto& seg : _data)
+            for (auto& ais : seg->GetAISShapes())
+                _view.push_back(ais);
+
+        if (_tool != nullptr) SetActualPosition();
+
+        _tool = tool;
+        _view.push_back(_tool->GetAISShape());
+        SetActualPosition();
+    }
+
+    std::vector<std::shared_ptr<Segment>> Manipulator::GetSegmnets() const
+    {
+        return _data;
+    }
+
+    std::shared_ptr<Tool> Manipulator::GetTool() const
+    {
+        return _tool;
+    }
 
     Manipulator::DescriptionSegment Manipulator::FindSegment(Handle(AIS_InteractiveObject) obj)
     {
@@ -136,22 +164,22 @@ using Lib::Tools::FrameToTrsf;
     void Manipulator::MoveTCP(gp_Trsf pos)
     {
         KDL::Frame newTCP = Lib::Tools::TrsfToFrame(pos);
-        _kinematic.MoveTCP(newTCP);
-        KDL::Frame actualTCP = _kinematic.GetTCP();
+        _modelKinematic->MoveTCP(newTCP);
+        KDL::Frame actualTCP = _modelKinematic->GetTCP();
         _tool->SetTCP(Lib::Tools::FrameToTrsf(actualTCP));
         SetActualPosition();
     }
 
     void Manipulator::MoveSegment(int numberSegment, double newPosition)
     {
-        _kinematic.MoveSegment(numberSegment,newPosition);
+        _modelKinematic->MoveSegment(numberSegment,newPosition);
         SetActualPosition();
     }
 
     void Manipulator::SetSegments(std::vector<std::shared_ptr<Segment> > segments)
     {
         _data = segments;
-        _kinematic.Init(segments);
+        _modelKinematic->Init(_data);
 
         for (auto& seg : _data)
             for (auto& ais : seg->GetAISShapes())
@@ -167,17 +195,22 @@ using Lib::Tools::FrameToTrsf;
         SetActualPosition();
     }
 
-    gp_Trsf Lib::Data::Manipulator::GetTCP()
+    gp_Trsf Manipulator::GetTCP() const
     {
         return _tool->GetTCP();
     }
 
-    std::vector<Handle (AIS_InteractiveObject)>& Lib::Data::Manipulator::GetView()
+    std::vector<Handle (AIS_InteractiveObject)> Manipulator::GetView() const
     {
         return _view;
     }
 
-    bool Manipulator::IsEmpty()
+    std::shared_ptr<Lib::Kinematic::IKinematic> Lib::Data::Manipulator::GetKinematicModel() const
+    {
+        return _modelKinematic;
+    }
+
+    bool Manipulator::IsEmpty() const
     {
         return _data.empty();
     }
@@ -186,7 +219,7 @@ using Lib::Tools::FrameToTrsf;
     {
         gp_Trsf local = _data[0]->GetTransform();
 
-        auto actualPos = _kinematic.GetPosition();
+        auto actualPos = _modelKinematic->GetPosition();
         for(int i = 1; i < _data.size(); i++)
         {
             gp_Trsf temp = _data[i]->GetTransform();
@@ -200,4 +233,4 @@ using Lib::Tools::FrameToTrsf;
         _tool->SetTransform(temp);
     }
 
-    }}
+}}

@@ -36,9 +36,9 @@ std::tuple<Vector3d,Vector3d,Vector3d,double>  CubicSpline::EvaluateSplineAtTime
                                                                                     pow((spline_velocity.x()*spline_velocity.x()+spline_velocity.y()*spline_velocity.y()),(3/2));
 
     return std::make_tuple( spline_positions,
-                           spline_velocity,
-                           spline_acceleration,
-                           spline_curvature );
+                            spline_velocity,
+                            spline_acceleration,
+                            spline_curvature );
 }
 
 void CubicSpline::ResetDerived()
@@ -216,7 +216,7 @@ Vector3d CubicSpline::ConstVelocitySplineAtTime(double t, double speed)
     // Because of root finding it may be slightly negative sometimes.
     // VAssert(t_next >= -0.1f && t_next <= 999999);
 
-    // return EvaluateSplineAtTime(t_next);
+    //return EvaluateSplineAtTime(t_next);
     return Vector3d(0.0,0.0,0.0);
 }
 

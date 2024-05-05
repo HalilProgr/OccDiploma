@@ -1,8 +1,8 @@
 #ifndef CUBIC_SPLINE_H
 #define CUBIC_SPLINE_H
+
 #include "splinecurve.h"
 
-using namespace Eigen;
 
 /** Cubic Spline
   * Works best with tightly packed waypoint list
@@ -10,7 +10,7 @@ using namespace Eigen;
 class CubicSpline : public SplineCurve
 {
 private:
-    /* The system of linear equations found by solving
+        /* The system of linear equations found by solving
          * for the 3 order spline polynomial is given by:
          * A*x = b.  The "x" is represented by x_col_ and the
          * "b" is represented by waypoints in the code.
@@ -31,10 +31,16 @@ private:
          *  in Robert Sedgewick's "Algorithms in C++".
          *
          */
-    Vector3d x_col_[NOM_SIZE][4]; // column full of constants to solve for trinomial
+    Eigen::Vector3d x_col_[NOM_SIZE][4]; // column full of constants to solve for trinomial
 
 public:
+
     /** Overall arc length integrand of the curve */
+    ///
+    /// \brief ArcLengthIntegrand
+    /// \param t -
+    /// \return
+    ///
     double ArcLengthIntegrand(double t);
 
     /** Arc length integrand of a spline segment and point in time */
@@ -63,15 +69,15 @@ public:
     double EvaluateCurveLength();
 
     CubicSpline();
-    CubicSpline(std::vector<Vector3d> points);
-    CubicSpline(std::vector<Vector3d> points, int segments_per_pt);
+    CubicSpline(std::vector<Eigen::Vector3d> points);
+    CubicSpline(std::vector<Eigen::Vector3d> points, int segments_per_pt);
     ~CubicSpline(){}
 
-    /**
-         * Evaluate spline for the ith segment for x,y,z params.
-         * The value of param t must be (0<=t<=1)
-         */
-    std::tuple<Vector3d,Vector3d,Vector3d,double>  EvaluateSplineAtTime(double t) override;
+    /*
+    * Evaluate spline for the ith segment for x,y,z params.
+    * The value of param t must be (0<=t<=1)
+    */
+    std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d, double>  EvaluateSplineAtTime(double t) override;
 
     // Inherited Functions from spline.h //
     /* Clear out all the data.*/

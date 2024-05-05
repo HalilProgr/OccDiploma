@@ -1,26 +1,17 @@
 #include "mainwindow.h"
-
-#include <QVBoxLayout>
-#include <QFrame>
-#include <QSplitter>
-#include <AIS_ViewCube.hxx>
-#include <AIS_Shape.hxx>
-#include <BRepPrimAPI_MakeBox.hxx>
-
-#include <QLabel>
 #include <QHBoxLayout>
-
 #include "src/data/Segment.h"
 #include "src/algorithms/kinematic.h"
 #include "src/common/DocumentCommon.h"
 #include <QHBoxLayout>
+
 
 ApplicationCommonWindow::ApplicationCommonWindow()
     : QMainWindow (nullptr)
 {
     document = new Lib::Common::DocumentCommon(this);
     viewer = new OcctQtViewer(document, this);
-    controller = new Lib::Common::Controller(document, this);
+    controller = new Lib::Common::Controller(viewer, document, this);
 
     QWidget* mainWidget = new QWidget(this);
     QHBoxLayout* layout = new QHBoxLayout;
@@ -36,6 +27,7 @@ ApplicationCommonWindow::~ApplicationCommonWindow()
 {
     delete viewer;
     delete document;
+    delete controller;
 }
 
 void ApplicationCommonWindow::Init()

@@ -54,8 +54,6 @@ namespace Common
              myContext->RemoveAll(false);
         myContext.Nullify();
         myViewer.Nullify();
-        // release OCCT viewer
-        myViewer.Nullify();
     }
 
     void DocumentCommon::ActivateManipulator(Handle(AIS_InteractiveObject) object)
@@ -89,7 +87,6 @@ namespace Common
         }
     }
 
-    /// Под вопросом реализация????
     void DocumentCommon::DislayAll()
     {
         myContext->RemoveAll(Standard_False);
@@ -118,4 +115,4 @@ namespace Common
 
     const Handle(V3d_Viewer)& DocumentCommon::GetViewer() { return myViewer; }
 
-    }}
+}}

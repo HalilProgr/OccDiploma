@@ -102,10 +102,6 @@ public:
     /**Triangulizes the "A" matrix of a cubic function*/
     virtual bool ComputeSpline() = 0;
 
-    // virtual double ArcLengthIntegrand(int spline, double t) = 0;
-    // virtual double Integrate(int spline, double t) = 0;
-    // virtual Vector3d ConstVelocitySplineAtTime(double t) = 0;
-
     /** Prints out data pertaining to a specific spline type. */
     virtual void PrintDerivedData() {}
 

@@ -44,37 +44,32 @@ namespace Data {
         return false;
     }
 
-    void Tool::SetTCP (gp_Trsf& newTCP)
+    void Tool::SetTCP (const gp_Trsf& newTCP)
     {
         _currentTCP = newTCP;
     }
 
-    void Tool::SetTCP (gp_Trsf newTCP)
-    {
-        _currentTCP = newTCP;
-    }
-
-    void Lib::Data::Tool::SetTransform(gp_Trsf &newPosition)
+    void Tool::SetTransform(const gp_Trsf &newPosition)
     {
         _object->SetLocalTransformation(newPosition);
     }
 
-    Mode Tool::GetMode()
+    Mode Tool::GetMode() const
     {
         return Mode::tool;
     }
 
-    gp_Trsf Tool::GetTCP()
+    gp_Trsf Tool::GetTCP() const
     {
         return _currentTCP;
     }
 
-    gp_Trsf Tool::GetTransform()
+    gp_Trsf Tool::GetTransform() const
     {
         return _currentPosition;
     }
 
-    Handle (AIS_InteractiveObject) Tool::GetAISShape()
+    Handle (AIS_InteractiveObject) Tool::GetAISShape() const
     {
         return _object;
     }

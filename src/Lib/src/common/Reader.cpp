@@ -177,12 +177,12 @@ namespace Common
         return true;
     }
 
-    std::vector<std::shared_ptr<Data::Segment> > Reader::GetSegments()
+    std::vector<std::shared_ptr<Data::Segment> > Reader::GetSegments() const
     {
         return _actualSegments;
     }
 
-    std::shared_ptr<Data::Tool> Reader::GetTool()
+    std::shared_ptr<Data::Tool> Reader::GetTool() const
     {
         return _actualTool;
     }

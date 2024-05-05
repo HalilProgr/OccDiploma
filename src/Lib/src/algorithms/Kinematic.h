@@ -36,25 +36,25 @@ namespace Lib
         /// \brief Переместить точку TCP, найти обобщенные координаты
         /// \param Новое положение TCP
         ///
-        void MoveTCP(KDL::Frame& newTCP) override;
+        bool MoveTCP(const KDL::Frame& newTCP) override;
+
+        ///
+        /// \brief SetPosition
+        /// \param input
+        ///
+        void SetPosition(const KDL::JntArray input);
 
         ///
         /// \brief Возвращает обобщенные координаты
         /// \return Текущие матрицы преобразований манипулятора
         ///
-        KDL::JntArray& GetPosition() override
-        {
-            return _jointCur;
-        }
+        KDL::JntArray GetPosition() const override;
 
         ///
         /// \brief Получить текущее положение TCP
         /// \return Gоложение и ориентация точки TCP
         ///
-        KDL::Frame& GetTCP() override
-        {
-            return _curTcp;
-        }
+        KDL::Frame GetTCP() const  override;
 
     private:
 
@@ -75,7 +75,7 @@ namespace Lib
         ///
         /// \brief Алгоритм решения обратной задачи кинематики
         ///
-        bool InverseKinematic(KDL::JntArray& q_inp, KDL::JntArray& q_out, KDL::Frame& _newTcp) override;
+        bool InverseKinematic(KDL::JntArray& q_inp, KDL::JntArray& q_out,const KDL::Frame& _newTcp) override;
 
     private:
         KDL::Chain _chain;

@@ -59,16 +59,33 @@ namespace Kinematic
         _jointCur = _temp;
     }
 
-    void kinematic::MoveTCP(KDL::Frame& newTCP)
+    bool kinematic::MoveTCP(const KDL::Frame& newTCP)
     {
         if (!InverseKinematic(_jointCur, _temp, newTCP))
         {
             _temp = _jointCur;
-            return;
+            return false;
         }
 
         _jointCur = _temp;
         ForwardKinematic(_jointCur, _curTcp);
+
+        return true;
+    }
+
+    void kinematic::SetPosition(const KDL::JntArray input)
+    {
+        _jointCur = input;
+    }
+
+    KDL::JntArray kinematic::GetPosition() const
+    {
+        return _jointCur;
+    }
+
+    KDL::Frame kinematic::GetTCP() const
+    {
+        return _curTcp;
     }
 
     KDL::Segment kinematic::SegmentToKDLSegment(int count, std::shared_ptr<Data::Segment>& ptrSegment)
@@ -101,7 +118,7 @@ namespace Kinematic
         return true;
     }
 
-    bool kinematic::InverseKinematic(KDL::JntArray& q_inp, KDL::JntArray& q_out, KDL::Frame& _newTcp)
+    bool kinematic::InverseKinematic(KDL::JntArray& q_inp, KDL::JntArray& q_out,const KDL::Frame& _newTcp)
     {
         KDL::ChainFkSolverPos_recursive fksolver1(_chain);//Forward position solver
         KDL::ChainIkSolverVel_pinv iksolver1v(_chain);//Inverse velocity solver

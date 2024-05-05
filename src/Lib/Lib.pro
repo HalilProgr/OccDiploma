@@ -19,7 +19,7 @@ SOURCES += \
             src/common/Reader.cpp \
             src/common/RobotManipulator.cpp \
             src/common/Tools.cpp \
-            src/common/Animation.cpp \
+            src/algorithms/Animation.cpp \
             src/common/Controller.cpp \
             src/data/Manipulator.cpp \
             src/data/Segment.cpp \
@@ -35,7 +35,7 @@ HEADERS += \
            src/algorithms/SplineCurve.h \
            src/common/DocumentCommon.h \
            src/common/Reader.h \
-           src/common/Animation.h \
+           src/algorithms/Animation.h \
            src/common/Controller.h \
            src/data/CommonType.h \
            src/common/RobotManipulator.h \

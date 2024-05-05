@@ -28,9 +28,10 @@ namespace Lib
         };
 
         Manipulator();
-        Manipulator(std::vector<std::shared_ptr<Segment>> segments);
+        Manipulator(const std::vector<std::shared_ptr<Segment>> segments, const std::shared_ptr<Tool> tool);
 
-        std::vector<std::shared_ptr<Segment>>& GetSegmnets() {return _data;}
+        std::vector<std::shared_ptr<Segment>> GetSegmnets() const;
+        std::shared_ptr<Tool> GetTool() const;
 
 
         DescriptionSegment FindSegment(Handle(AIS_InteractiveObject) obj);
@@ -46,17 +47,18 @@ namespace Lib
         /// \brief SetSegments
         /// \param segments
         ///
-        void SetSegments(std::vector<std::shared_ptr<Segment>> segments);
-        void SetTool(std::shared_ptr<Tool> tool);
+        void SetSegments(const std::vector<std::shared_ptr<Segment>> segments);
+        void SetTool(const std::shared_ptr<Tool> tool);
 
-        gp_Trsf GetTCP();
-        std::vector<Handle(AIS_InteractiveObject)>& GetView();
+        gp_Trsf GetTCP() const;
+        std::vector<Handle(AIS_InteractiveObject)> GetView() const;
+        std::shared_ptr<Lib::Kinematic::IKinematic> GetKinematicModel() const;
 
         ///
         /// \brief IsEmpty
         /// \return
         ///
-        bool IsEmpty();
+        bool IsEmpty() const;
 
     private:
         void SetActualPosition();
@@ -64,7 +66,7 @@ namespace Lib
         bool _displaed;
         bool _empty;
 
-        Kinematic::kinematic _kinematic; // кинематика робота.
+        std::shared_ptr<Kinematic::kinematic> _modelKinematic; // кинематика робота.
         std::vector<std::shared_ptr<Segment>> _data; // думаю лучше хранить сегменты в shared_ptr
         std::shared_ptr<Tool> _tool;
          // удобное отображение элементов в OCC формате, необходимо для отображения элементов в Document

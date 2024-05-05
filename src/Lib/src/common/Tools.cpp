@@ -89,4 +89,24 @@ namespace Lib
 
         return res;
     }
+
+    Eigen::Vector3d TrsfToVector3D(gp_Trsf input)
+    {
+        Eigen::Vector3d res;
+        res[0] = input.TranslationPart().X();
+        res[1] = input.TranslationPart().Y();
+        res[2] = input.TranslationPart().Z();
+
+        return res;
+    }
+
+    gp_Trsf MakeTrsf(gp_Pnt point, gp_Quaternion angl)
+    {
+        gp_Trsf res;
+        res.SetTranslationPart(gp_Vec(point.X(),point.Y(),point.Z()));
+        res.SetRotationPart(angl);
+
+        return res;
+    }
+
 }}

@@ -21,7 +21,7 @@ namespace Lib
         struct Limit
         {
             Limit(double init = 0, double max = 0, double min = 0) :
-                init(init),max(max),min(min){}
+                init(init), max(max), min(min){}
 
             double init;
             double max;

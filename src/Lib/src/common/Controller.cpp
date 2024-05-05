@@ -6,7 +6,7 @@
 #include <src/algorithms/CubicSpline.h>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
-
+#include "src/common/Tools.h"
 #include <QDebug>
 
 
@@ -15,43 +15,51 @@ namespace Lib
     namespace Common
     {
 
-Controller::Controller(DocumentCommon* doc, QWidget* parent) : QWidget(parent), _document(doc)
+Controller::Controller(OcctQtViewer* view, DocumentCommon* doc, QWidget* parent) : QWidget(parent), _document(doc), _view(view)
+        {
+            InitGUI();
+            InitSignals();
+        }
+
+        void Lib::Common::Controller::InitGUI()
         {
             QHBoxLayout* lines = new QHBoxLayout;
-            interface.x = new QLineEdit("X value", this);
-            interface.y = new QLineEdit("y value", this);
-            interface.z = new QLineEdit("z value", this);
+            _interface.x = new QLineEdit("X value", this);
+            _interface.y = new QLineEdit("y value", this);
+            _interface.z = new QLineEdit("z value", this);
 
-            lines->addWidget(interface.x);
-            lines->addWidget(interface.y);
-            lines->addWidget(interface.z);
+            lines->addWidget(_interface.x);
+            lines->addWidget(_interface.y);
+            lines->addWidget(_interface.z);
 
             QVBoxLayout* mainLayout = new QVBoxLayout;
 
-            interface.changeTCP = new QPushButton("ChangeTCP", this);
-            interface.addPoint = new QPushButton("Add Point", this);
-            interface.removeLastPoint = new QPushButton("Remove Last Point", this);
+            _interface.changeTCP = new QPushButton("ChangeTCP", this);
+            _interface.addPoint = new QPushButton("Add Point", this);
+            _interface.removeLastPoint = new QPushButton("Remove Last Point", this);
+            _interface.startAnimation = new QPushButton("Start Animation", this);
 
             mainLayout->addLayout(lines);
-            mainLayout->addWidget(interface.changeTCP);
-            mainLayout->addWidget(interface.addPoint);
-            mainLayout->addWidget(interface.removeLastPoint);
+            mainLayout->addWidget(_interface.changeTCP);
+            mainLayout->addWidget(_interface.addPoint);
+            mainLayout->addWidget(_interface.removeLastPoint);
+            mainLayout->addWidget(_interface.startAnimation);
 
             setLayout(mainLayout);
-
-            Init();
         }
 
-        void Controller::Init()
+        void Controller::InitSignals()
         {
-            connect(interface.changeTCP, &QPushButton::clicked, this, &Controller::TryUpdateTCP);
-            connect(interface.addPoint, &QPushButton::clicked, this, &Controller::AddPoint);
-            connect(interface.removeLastPoint, &QPushButton::clicked, this, &Controller::RemovePoint);
+            connect(_interface.changeTCP, &QPushButton::clicked, this, &Controller::TryUpdateTCP);
+            connect(_interface.addPoint, &QPushButton::clicked, this, &Controller::AddPoint);
+            connect(_interface.removeLastPoint, &QPushButton::clicked, this, &Controller::RemovePoint);
+            connect(_interface.startAnimation, &QPushButton::clicked, this, &Controller::StartAnimation);
         }
 
         void Controller::SetManipulator(std::shared_ptr<Data::Manipulator> manipPtr)
         {
             _manipulater = manipPtr;
+            _animation.SetManipulator(_manipulater);
         }
 
         void Controller::TryUpdateTCP()
@@ -60,9 +68,9 @@ Controller::Controller(DocumentCommon* doc, QWidget* parent) : QWidget(parent), 
 
             gp_Trsf TCP = _manipulater->GetTCP();
             gp_XYZ xyz = TCP.TranslationPart();
-            gp_Vec part(xyz.X() + interface.x->text().toDouble(),
-                        xyz.Y() + interface.y->text().toDouble(),
-                        xyz.Z() + interface.z->text().toDouble());
+            gp_Vec part(xyz.X() + _interface.x->text().toDouble(),
+                        xyz.Y() + _interface.y->text().toDouble(),
+                        xyz.Z() + _interface.z->text().toDouble());
             TCP.SetTranslation(part);
 
             _manipulater->MoveTCP(TCP);
@@ -70,15 +78,14 @@ Controller::Controller(DocumentCommon* doc, QWidget* parent) : QWidget(parent), 
 
         void Controller::AddPoint()
         {
-            gp_XYZ xyz = _manipulater->GetTCP().TranslationPart();
-            _points.push_back(gp_Pnt(xyz.X(), xyz.Y(), xyz.Z()));
+            _points.push_back(_manipulater->GetTCP());
 
             if ( _points.size() < 3) return;
 
             if (!_wire.IsNull())
                 _document->GetContext()->Erase(_wire,true);
 
-            _wire = DrawSpline(_points);
+            _wire = ComputeSpline(_points);
             _document->GetContext()->Display(_wire, 0);
         }
 
@@ -93,17 +100,44 @@ Controller::Controller(DocumentCommon* doc, QWidget* parent) : QWidget(parent), 
 
             if ( _points.size() < 3) return;
 
-            _wire = DrawSpline(_points);
+            _wire = ComputeSpline(_points);
             _document->GetContext()->Display(_wire, 0);
         }
 
-        Handle(AIS_Shape) Controller::DrawSpline(std::vector<gp_Pnt> &points)
+        void Controller::StartAnimation()
+        {
+            _animation = Animation(_document,_manipulater);
+
+            qDebug() << QString('_', 10);
+            qDebug() << "Start animation";
+            if (_pointsWire.empty()) return;
+
+            /// Это надо отсюда убрать !
+            std::vector<gp_Trsf> temp;
+            gp_Quaternion angle;
+
+            /// Это шляпа тоже.
+            for (auto & point : _pointsWire)
+                temp.push_back(Lib::Tools::MakeTrsf(point, angle));
+
+            _animation.SetPoints(temp);
+            if (!_animation.Compute())
+            {
+                qDebug() << "Error compute animation";
+                return;
+            }
+
+            auto anim = _view->ObjectsAnimation();
+            anim->Add(_animation.GetAnimation());
+
+            anim->StartTimer(0, 1.0, true);
+        }
+
+        Handle(AIS_Shape) Controller::ComputeSpline(std::vector<gp_Trsf>& points)
         {
             std::vector<Eigen::Vector3d> path; // libspline input
             for(unsigned int i = 0; i < points.size(); i++)
-                path.push_back( Vector3d(points[i].X(),
-                                         points[i].Y(),
-                                         points[i].Z()));
+                path.push_back(Lib::Tools::TrsfToVector3D(points[i]));
 
             CubicSpline c_spline(path);
             c_spline.BuildSpline(path);
@@ -119,14 +153,14 @@ Controller::Controller(DocumentCommon* doc, QWidget* parent) : QWidget(parent), 
 
             for(unsigned int i = 0; i < c_pathx.size(); ++i)
             {
-                c_pathx[i] = c_spline.GetPositionProfile()[i].x();
+                c_pathx[i] = c_spline.GetPositionProfile()[i].x(); // < это плохо написано, можно короче и красиивее.
                 c_pathy[i] = c_spline.GetPositionProfile()[i].y();
                 c_pathz[i] = c_spline.GetPositionProfile()[i].z();
 
                 p = {c_pathx[i],c_pathy[i],c_pathz[i]};
                 pvec.push_back(p);
             }
-
+            _pointsWire = pvec;
             qDebug() << "Spline size:" << pvec.size();
             qDebug() << " Spline:";
             for (auto& el : pvec)

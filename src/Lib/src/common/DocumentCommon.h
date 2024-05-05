@@ -3,10 +3,8 @@
 
 #include <Standard_WarningsDisable.hxx>
 #include <QObject>
-
 #include <AIS_InteractiveContext.hxx>
 #include <V3d_Viewer.hxx>
-// Тест манипулятора написанного мною ! //
 #include <src/common/RobotManipulator.h>
 #include <src/data/Manipulator.h>
 

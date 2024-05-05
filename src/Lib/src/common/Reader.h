@@ -54,14 +54,29 @@ namespace Lib
         /// \brief GetSegments
         /// \return
         ///
-        std::vector<std::shared_ptr<Data::Segment>> GetSegments();
-        std::shared_ptr<Lib::Data::Tool> GetTool();
+        std::vector<std::shared_ptr<Data::Segment>> GetSegments() const;
+        std::shared_ptr<Lib::Data::Tool> GetTool() const;
 
     private:
         // Методы для чтения Step файлов.
+        ///
+        /// \brief ParseSegment
+        /// \param value
+        /// \param latsPos
+        /// \return
+        ///
         std::shared_ptr<Data::Segment> ParseSegment(const QJsonObject& value, gp_Pnt& latsPos);
+
+        ///
+        /// \brief ParseTool
+        /// \param value
+        /// \param lastPoint
+        /// \return
+        ///
         std::shared_ptr<Data::Tool> ParseTool(const QJsonObject& value, gp_Pnt& lastPoint);
+
         std::vector<Handle (AIS_InteractiveObject)> ReadFile(const QString theStepName);
+
         void Visit( Handle( XCAFDoc_ShapeTool) aShapeTool, Handle( XCAFDoc_ColorTool) aColorTool,
                    const TDF_Label& theLabel, std::vector<Handle (AIS_InteractiveObject)>& outVec);
 
